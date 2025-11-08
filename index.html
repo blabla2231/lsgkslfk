@@ -178,7 +178,7 @@
         .card-inset { background: var(--bg-primary); border-radius: 20px; border: 1px solid var(--border-subtle); box-shadow: inset 0 6px 10px 0 var(--indent-shadow-top), inset 0 -4px 8px 0 var(--indent-highlight-bottom); padding: 15px; }
 
         /* Каталог */
-        .catalog-search-bar { width: 100%; height: 45px; border-radius: 25px; display: flex; align-items: center; padding: 0 15px; margin-bottom: 15px; }
+        .catalog-search-bar { width: 100%; height: 45px; border-radius: 25px; display: flex; align-items: center; padding: 0 15px; margin-bottom: 0; }
         .catalog-search-bar input { flex-grow: 1; background: transparent; border: none; outline: none; color: var(--text-color); font-size: 16px; margin-left: 10px; }
         .catalog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; transition: all 0.3s ease; }
         .catalog-grid.view-list { grid-template-columns: 1fr; }
@@ -188,16 +188,41 @@
         .product-rating { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; border-radius: 50%; background-color: #27ae60; color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10; }
         .product-card .btn-outset { width: 100%; padding: 8px 5px; border-radius: 10px; font-weight: 600; font-size: 13px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .product-price { font-size: 12px; opacity: 0.7; margin-top: 5px; }
-        .filter-buttons { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; -ms-overflow-style: none; scrollbar-width: none; }
-        .filter-buttons::-webkit-scrollbar { display: none; }
+        .filter-buttons {
+            /* --- ОСТАВЛЯЕМ КАК БЫЛО --- */
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            -ms-overflow-style: none;  /* Скрытие скроллбара IE/Edge */
+            scrollbar-width: none;     /* Скрытие скроллбара Firefox */
+
+            /* --- НОВЫЕ ОТСТУПЫ (ЧТОБЫ ТЕНИ ВЛЕЗЛИ) --- */
+            padding-top: 15px;    /* Место для верхней тени (~11px) */
+            padding-bottom: 20px; /* Место для нижней тени (~14px) + запас */
+            padding-left: 5px;    /* Чтобы тень первой кнопки не обрезалась слева */
+            padding-right: 5px;   /* Чтобы тень последней кнопки не обрезалась справа */
+            
+            margin-bottom: 0;     /* Сбрасываем внешний отступ, теперь рулим им через спец. классы рядов */
+        }        .filter-buttons::-webkit-scrollbar { display: none; }
         .filter-buttons .btn-outset { padding: 10px 18px; border-radius: 25px; font-size: 14px; white-space: nowrap; font-weight: bold; }
         /* Анимации фильтров */
         .catalog-search-bar, .primary-filters, .action-filters { max-height: 200px; overflow: hidden; will-change: max-height, opacity; transition: all 300ms ease; }
         .primary-filters { transition-delay: 50ms; } .action-filters { transition-delay: 100ms; }
         .catalog-search-bar.hidden, .primary-filters.hidden, .action-filters.hidden { max-height: 0; opacity: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; pointer-events: none; }
-        .primary-filters .btn-outset { box-shadow: 0 6px 8px -3px var(--bubble-outer-shadow), 0 -4px 8px -3px var(--bubble-top-reflection), inset 0 -2px 4px -2px var(--bubble-bottom-inset), inset 0 2px 4px -2px var(--bubble-center-highlight); }
-        .action-filters .btn-outset { box-shadow: 0 4px 6px -2px var(--bubble-outer-shadow), 0 -3px 6px -2px var(--bubble-top-reflection), inset 0 -1px 3px -1px var(--bubble-bottom-inset), inset 0 1px 3px -1px var(--bubble-center-highlight); }
+        .primary-filters {
+            margin-bottom: -25px !important; /* 35px (воздух) - 25px (margin) = 10px (итоговый визуальный отступ) */
+            position: relative;
+            z-index: 2; /* Чтобы верхний ряд был визуально выше нижнего, если они наедут */
+        }
 
+        /* Отступ от Второго ряда до Товаров */
+        /* Второй ряд имеет padding-bottom: 20px. */
+        /* Нам до товаров нужно, скажем, 15px. */
+        .action-filters {
+            margin-bottom: -5px !important; /* 20px (воздух) - 5px (margin) = 15px (итоговый отступ) */
+            position: relative;
+            z-index: 1;
+        }
         /* Чат */
         .chat-container { display: flex; flex-direction: column; gap: 10px; padding-bottom: 10px; }
         .chat-message { display: flex; }
@@ -290,6 +315,54 @@
                     <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Мясо" alt="Мясо" /><div class="product-rating" style="background-color:#27ae60;">9.1</div></div><button class="btn-outset">Фарш Говяжий</button><p class="product-price">350.00 руб.</p></div>
                     <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Чай" alt="Чай" /><div class="product-rating" style="background-color:#27ae60;">7.8</div></div><button class="btn-outset">Чай Зеленый</button><p class="product-price">220.00 руб.</p></div>
                     <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Напиток" alt="Напиток" /><div class="product-rating" style="background-color:#f39c12;">5.5</div></div><button class="btn-outset">Газировка 'Сладость'</button><p class="product-price">70.00 руб.</p></div>
+                    <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/8e44ad/FFF?text=Смузи" alt="Смузи" />
+                        <div class="product-rating" style="background-color:#8e44ad;">9.5</div>
+                    </div>
+                    <button class="btn-outset">Смузи Ягодный Микс</button>
+                    <p class="product-price">180.00 руб.</p>
+                </div>
+                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/2980b9/FFF?text=Вода" alt="Вода" />
+                        <div class="product-rating" style="background-color:#2980b9;">8.0</div>
+                    </div>
+                    <button class="btn-outset">Минеральная Вода</button>
+                    <p class="product-price">45.00 руб.</p>
+                </div>
+                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/d35400/FFF?text=Орехи" alt="Орехи" />
+                        <div class="product-rating" style="background-color:#27ae60;">9.8</div>
+                    </div>
+                    <button class="btn-outset">Миндаль Жареный</button>
+                    <p class="product-price">320.00 руб.</p>
+                </div>
+                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/2c3e50/FFF?text=Кофе" alt="Кофе" />
+                        <div class="product-rating" style="background-color:#f39c12;">7.5</div>
+                    </div>
+                    <button class="btn-outset">Холодный Кофе</button>
+                    <p class="product-price">140.00 руб.</p>
+                </div>
+                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/c0392b/FFF?text=Шоколад" alt="Шоколад" />
+                        <div class="product-rating" style="background-color:#c0392b;">3.5</div>
+                    </div>
+                    <button class="btn-outset">Молочный Шоколад</button>
+                    <p class="product-price">95.00 руб.</p>
+                </div>
+                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
+                    <div class="img-container">
+                        <img src="https://placehold.co/150x100/27ae60/FFF?text=Салат" alt="Салат" />
+                        <div class="product-rating" style="background-color:#27ae60;">9.9</div>
+                    </div>
+                    <button class="btn-outset">Салат Цезарь BIO</button>
+                    <p class="product-price">280.00 руб.</p>
+                </div>
                 </div>
             </div>
 
@@ -406,7 +479,7 @@
         // === НАВИГАЦИЯ (Стек Истории) ===
         const Nav = {
             historyStack: [],
-            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.CHAT, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE],
+            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE],
             currentScreenId: CONFIG.SCREENS.CATALOG,
 
             to: (targetId) => {
