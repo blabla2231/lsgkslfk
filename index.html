@@ -1,53 +1,186 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Fullscreen Navigation Reference</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>AI Mini App (Mobile Only)</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
+        /* ================================================================== */
+        /* 1. НАСТРОЙКИ И ПЕРЕМЕННЫЕ                                          */
+        /* ================================================================== */
+        :root {
+            --bg-primary: #D1D9E6;
+            --text-color: #444f6a;
+            --accent-color: #007aff;
+            --element-bg: #EAEAEA;
+            --border-subtle: rgba(255, 255, 255, 0.5);
+            
+            /* Тени (Neumorphism) */
+            --bubble-outer-shadow: rgba(0, 0, 0, 0.35);
+            --bubble-bottom-inset: rgba(0, 0, 0, 0.25);
+            --bubble-top-reflection: rgba(255, 255, 255, 0.9);
+            --bubble-center-highlight: rgba(255, 255, 255, 0.7);
+            --indent-shadow-top: rgba(0, 0, 0, 0.25);
+            --indent-highlight-bottom: rgba(255, 255, 255, 1.0);
+
+            /* Glassmorphism для таб-бара */
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --glass-shadow: rgba(0, 0, 0, 0.2);
+
+            /* === ГЕОМЕТРИЯ НИЖНЕЙ ЧАСТИ (ВАЖНО ДЛЯ СКРОЛЛА) === */
+            --tab-bar-height: 80px;
+            /* Отступ таб-бара от самого низа физического экрана (10px + системная зона iOS) */
+            --tab-bar-bottom-offset: calc(10px + var(--tg-content-safe-area-inset-bottom, 0px));
+            /* Итоговый отступ контента снизу: высота бара + его смещение + 20px воздуха */
+            --content-bottom-padding: calc(var(--tab-bar-height) + var(--tab-bar-bottom-offset) + 20px);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #25282E;
+            --text-color: #b0b8c4;
+            --accent-color: #0084ff;
+            --element-bg: #30343E;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --bubble-outer-shadow: rgba(0, 0, 0, 0.7);
+            --bubble-bottom-inset: rgba(0, 0, 0, 0.5);
+            --bubble-top-reflection: rgba(255, 255, 255, 0.15);
+            --bubble-center-highlight: rgba(255, 255, 255, 0.1);
+            --indent-shadow-top: rgba(0, 0, 0, 0.4);
+            --indent-highlight-bottom: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(48, 52, 62, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        /* ================================================================== */
+        /* 2. КАРКАС ПРИЛОЖЕНИЯ (ПО СЛОЯМ)                                    */
+        /* ================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            margin: 0; padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
-            min-height: 100vh;
+            background-color: var(--bg-primary);
+            color: var(--text-color);
+            /* Занимаем весь экран и выстраиваемся в колонку */
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Запрещаем скролл всего body, скроллим только контент */
+        }
+
+        /* СЛОЙ 1: Верхний системный пенопласт (под часы) */
+        .safe-zone-top-system {
+            height: var(--tg-safe-area-inset-top);
+            flex-shrink: 0; /* Не сжиматься! */
+            z-index: 100; /* На всякий случай поверх контента, если вдруг что */
+        }
+
+        /* СЛОЙ 2: Верхний Telegram пенопласт (под кнопку закрыть) */
+        .safe-zone-top-telegram {
+            height: var(--tg-content-safe-area-inset-top);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        /* СЛОЙ 3: Обертка для контента и плавающих элементов */
+        .app-layout {
+            flex-grow: 1; /* Занимает всё оставшееся место */
+            position: relative; /* Чтобы внутри работали absolute элементы */
+            overflow: hidden; /* Чтобы плавающие элементы не вызывали скролл */
             display: flex;
             flex-direction: column;
         }
 
-        /* === ВЕРХНИЕ БЕЗОПАСНЫЕ ЗОНЫ === */
-        .safe-zone-top-system {
-            height: var(--tg-safe-area-inset-top);
-            flex-shrink: 0;
-        }
-        .safe-zone-top-telegram {
-            height: var(--tg-content-safe-area-inset-top);
-            flex-shrink: 0;
-        }
-
-        /* === ОСНОВНОЙ КОНТЕНТ === */
-        .main-content {
+        /* СЛОЙ 4: Скроллящийся контент */
+        .content-scroll-area {
             flex-grow: 1;
-            padding-left: calc(var(--tg-safe-area-inset-left) + 15px);
-            padding-right: calc(var(--tg-safe-area-inset-right) + 15px);
-            padding-bottom: calc(var(--tg-content-safe-area-inset-bottom) + 15px);
-            overflow-y: auto; /* Чтобы контент можно было скроллить, если он длинный */
+            overflow-y: auto; /* Включаем вертикальный скролл */
+            -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+            
+            /* ОТСТУПЫ КОНТЕНТА (ПЕНОПЛАСТ ВНУТРИ КОРОБКИ) */
+            padding-top: 20px; /* Немного воздуха сверху под шапкой */
+            padding-left: calc(15px + var(--tg-safe-area-inset-left)); /* Слева + защита от вырезов */
+            padding-right: calc(15px + var(--tg-safe-area-inset-right)); /* Справа + защита от вырезов */
+            
+            /* ГЛАВНОЕ: Нижний отступ, рассчитанный по формуле выше */
+            padding-bottom: var(--content-bottom-padding);
         }
 
-        /* Стили страниц */
-        .page { display: none; }
-        .page.active { display: block; }
+        /* Убираем полосу прокрутки для красоты */
+        .content-scroll-area::-webkit-scrollbar { width: 0; }
 
-        h1 { margin-top: 0; padding-top: 10px; }
-        button {
-            padding: 12px 20px;
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #fff);
-            border: none; border-radius: 10px;
-            font-size: 16px; cursor: pointer;
-            width: 100%; margin-top: 20px;
+        /* ================================================================== */
+        /* 3. ПЛАВАЮЩИЕ ПАНЕЛИ (НИЖНИЙ UI)                                    */
+        /* ================================================================== */
+        .floating-bar {
+            position: absolute;
+            left: 15px; right: 15px; /* Отступы по бокам */
+            bottom: var(--tab-bar-bottom-offset); /* Отступ снизу (учитывает safe area) */
+            z-index: 1000; /* Поверх контента */
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
+
+        /* Таб-бар */
+        .tab-bar {
+            height: var(--tab-bar-height);
+            max-width: 400px; /* Чтобы на планшетах не был гигантским */
+            margin: 0 auto; /* Центрируем если экран широкий */
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px -10px var(--glass-shadow);
+            border-radius: 30px;
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 0 10px;
+        }
+
+        /* Поле ввода чата (скрыто по умолчанию) */
+        .chat-input-bar {
+            height: var(--tab-bar-height);
+            display: flex; align-items: center; gap: 10px;
+            padding: 0 5px;
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transform: translateY(20px); /* Небольшая анимация появления */
+        }
+        .chat-input-bar.active {
+            opacity: 1; visibility: visible; pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        /* ================================================================== */
+        /* 4. КОМПОНЕНТЫ ИНТЕРФЕЙСА (СТИЛИ)                                   */
+        /* ================================================================== */
+        /* Кнопки таб-бара */
+        .tab-button { background: none; border: none; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-color); font-size: 11px; font-weight: 600; opacity: 0.6; transition: all 0.2s; cursor: pointer; }
+        .tab-button.active { opacity: 1; color: var(--accent-color); }
+        .tab-button svg { width: 24px; height: 24px; fill: currentColor; }
+
+        /* Экраны */
+        .screen { display: none; animation: fade-in 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Карточки и кнопки (Neumorphism lite) */
+        .card, .btn { background: var(--element-bg); border: 1px solid var(--border-subtle); border-radius: 20px; }
+        .card { padding: 20px; box-shadow: inset 0 2px 5px var(--indent-shadow-top), inset 0 -2px 5px var(--indent-highlight-bottom); margin-bottom: 15px; }
+        .btn { padding: 12px 20px; font-weight: 600; color: var(--text-color); box-shadow: 0 5px 10px -5px var(--bubble-outer-shadow), 0 -2px 5px -2px var(--bubble-top-reflection); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .btn:active { transform: scale(0.96); }
+        .btn.primary { background: var(--accent-color); color: white; border: none; }
+
+        /* Элементы каталога */
+        .catalog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .product-item { display: flex; flex-direction: column; gap: 10px; }
+        .product-img { height: 120px; background: #ccc; border-radius: 15px; position: relative; }
+        .rating-badge { position: absolute; top: 10px; right: 10px; background: #27ae60; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+        /* Чат */
+        .chat-messages { display: flex; flex-direction: column; gap: 15px; padding-bottom: 10px; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 18px; line-height: 1.4; }
+        .msg-ai { align-self: flex-start; background: var(--bg-primary); border: 1px solid var(--border-subtle); border-bottom-left-radius: 5px; }
+        .msg-user { align-self: flex-end; background: var(--element-bg); border: 1px solid var(--border-subtle); border-bottom-right-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -55,39 +188,219 @@
     <div class="safe-zone-top-system"></div>
     <div class="safe-zone-top-telegram"></div>
 
-    <div class="main-content">
+    <div class="app-layout">
+        
+        <div class="content-scroll-area" id="main-scroll">
+            
+            <div id="screen-catalog" class="screen active">
+                <h1 style="margin-bottom: 20px;">Каталог</h1>
+                <div class="catalog-grid">
+                    <div class="product-item" onclick="Nav.to('screen-details')">
+                        <div class="card product-img" style="padding:0; margin:0;">
+                            <img src="https://placehold.co/300x200/27ae60/FFF.png?text=Product" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">
+                            <div class="rating-badge">9.2</div>
+                        </div>
+                        <div class="btn">Йогурт BIO</div>
+                    </div>
+                    <div class="product-item" onclick="Nav.to('screen-details')">
+                        <div class="card product-img" style="padding:0; margin:0;">
+                             <img src="https://placehold.co/300x200/e67e22/FFF.png?text=Food" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">
+                             <div class="rating-badge">8.5</div>
+                        </div>
+                        <div class="btn">Снеки Fit</div>
+                    </div>
+                     <div class="product-item" onclick="Nav.to('screen-details')">
+                        <div class="card product-img" style="padding:0; margin:0;">
+                             <img src="https://placehold.co/300x200/3498db/FFF.png?text=Drink" style="width:100%; height:100%; object-fit:cover; border-radius:15px;">
+                             <div class="rating-badge">7.9</div>
+                        </div>
+                        <div class="btn">Вода Mineral</div>
+                    </div>
+                     <div style="height: 300px; background: rgba(0,0,0,0.05); border-radius: 20px; grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; color: gray;">
+                        Место для скролла...
+                     </div>
+                     <div style="height: 300px; background: rgba(0,0,0,0.05); border-radius: 20px; grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; color: gray;">
+                        Еще скролл...
+                     </div>
+                </div>
+            </div>
 
-        <div id="page1" class="page active">
-            <h1>Главная страница</h1>
-            <p>Контент начинается строго под шапкой Telegram.</p>
-            <button onclick="goToPage2()">Перейти на страницу 2</button>
+            <div id="screen-chat" class="screen">
+                <div class="chat-messages">
+                    <div class="message msg-ai">Привет! Я AI-помощник. Что ищем?</div>
+                    <div class="message msg-user">Покажи продукты без сахара</div>
+                    <div class="message msg-ai">Вот что я нашел для вас...</div>
+                    <div style="height: 500px;"></div>
+                    <div class="message msg-ai">Это последнее сообщение. Оно должно быть видно НАД полем ввода.</div>
+                </div>
+            </div>
+
+            <div id="screen-profile" class="screen">
+                <h1>Профиль</h1>
+                <div class="card">
+                    <h3>Иван Иванов</h3>
+                    <p style="opacity: 0.6;">Настройки аккаунта</p>
+                </div>
+                <div class="btn" style="width: 100%; justify-content: space-between;" onclick="Nav.to('screen-settings')">
+                    Настройки приложения <span>→</span>
+                </div>
+            </div>
+
+            <div id="screen-details" class="screen">
+                <div class="card" style="height: 200px; background: #ccc; margin-bottom: 20px;">
+                    </div>
+                <h1>Йогурт BIO Natural</h1>
+                <p style="opacity: 0.7; margin-bottom: 20px;">Очень полезный йогурт без добавок.</p>
+                <div class="card">
+                    <h3>Состав</h3>
+                    <p>Молоко нормализованное, закваска.</p>
+                </div>
+                <button class="btn primary" style="width: 100%;">Добавить в корзину</button>
+            </div>
+
+             <div id="screen-settings" class="screen">
+                <h1>Настройки</h1>
+                <p>Тут разные переключатели...</p>
+            </div>
+
+        </div> <div id="tab-bar" class="floating-bar tab-bar">
+            <button class="tab-button active" data-screen="screen-catalog">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Каталог
+            </button>
+            <button class="tab-button" data-screen="screen-chat">
+                <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                Чат
+            </button>
+            <button class="tab-button" data-screen="screen-profile">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.67-5.33-4-8-4z"/></svg>
+                Профиль
+            </button>
         </div>
 
-        <div id="page2" class="page">
-            <h1>Вторая страница</h1>
-            <p>Обратите внимание на кнопку "Назад" в шапке Telegram.</p>
-            <p>Она появилась, потому что мы вызвали <code>BackButton.show()</code>.</p>
+        <div id="chat-input" class="floating-bar chat-input-bar">
+             <div class="card" style="flex-grow: 1; margin: 0; display: flex; align-items: center; padding: 0 15px; height: 50px;">
+                 <input type="text" placeholder="Сообщение..." style="border:none; background:none; outline:none; flex-grow:1; font-size:16px; color:var(--text-color);">
+             </div>
+             <button class="btn primary" style="width: 50px; height: 50px; border-radius: 50%; padding: 0;">
+                 <svg viewBox="0 0 24 24" style="width:24px; height:24px; fill:white; transform: translateX(2px);"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+             </button>
         </div>
 
     </div>
 
     <script>
+        // === ИНИЦИАЛИЗАЦИЯ ===
         const tg = window.Telegram.WebApp;
         tg.ready();
+        // Просим Fullscreen (для новых версий Telegram)
         if (tg.requestFullscreen) tg.requestFullscreen();
 
-        // Настраиваем обработчик кнопки "Назад" один раз при запуске
-        tg.BackButton.onClick(() => {
-            document.getElementById('page2').classList.remove('active');
-            document.getElementById('page1').classList.add('active');
-            tg.BackButton.hide(); // Скрываем кнопку, возвращаемся к крестику
+        // На всякий случай принудительно красим шапку в цвет фона, чтобы сливалась
+        if (tg.setHeaderColor) tg.setHeaderColor(getComputedStyle(document.body).getPropertyValue('--bg-primary').trim());
+
+
+        // === МОДУЛЬ НАВИГАЦИИ ===
+        const Nav = {
+            historyStack: [], // Стопка тарелок для истории
+
+            // Главные экраны (при переходе на них история очищается)
+            mainScreens: ['screen-catalog', 'screen-chat', 'screen-profile'],
+            
+            currentScreenId: 'screen-catalog',
+
+            // Функция перехода
+            to: (screenId) => {
+                // Если уже тут, игнорируем
+                if (screenId === Nav.currentScreenId) return;
+
+                // Вибрация для тактильного отклика
+                tg.HapticFeedback.impactOccurred('light');
+
+                const isMain = Nav.mainScreens.includes(screenId);
+
+                if (isMain) {
+                    // Переход на главный экран -> сброс истории
+                    Nav.historyStack = [];
+                    tg.BackButton.hide();
+                } else {
+                    // Переход вовнутрь -> запоминаем, откуда пришли
+                    Nav.historyStack.push(Nav.currentScreenId);
+                    tg.BackButton.show();
+                }
+
+                // Переключаем видимость экранов
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(screenId).classList.add('active');
+                Nav.currentScreenId = screenId;
+
+                // Скроллим контент наверх при переходе
+                document.getElementById('main-scroll').scrollTop = 0;
+
+                // Управляем нижними панелями
+                Nav.updateFloatingBars(screenId);
+            },
+
+            // Функция возврата назад
+            back: () => {
+                if (Nav.historyStack.length > 0) {
+                    // Достаем последний экран из стопки
+                    const prevScreenId = Nav.historyStack.pop();
+                    
+                    // Переключаемся вручную (не вызывая Nav.to, чтобы не зациклить)
+                    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                    document.getElementById(prevScreenId).classList.add('active');
+                    Nav.currentScreenId = prevScreenId;
+                    
+                    // Если стопка опустела, скрываем кнопку
+                    if (Nav.historyStack.length === 0) tg.BackButton.hide();
+                    
+                    Nav.updateFloatingBars(prevScreenId);
+                } else {
+                    // Если вдруг истории нет, а назад нажали -> в каталог
+                    Nav.to('screen-catalog');
+                }
+            },
+
+            // Обновление нижних баров (Табы или Чат)
+            updateFloatingBars: (screenId) => {
+                const tabBar = document.getElementById('tab-bar');
+                const chatInput = document.getElementById('chat-input');
+                
+                // Сбрасываем активные табы
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
+                if (Nav.mainScreens.includes(screenId)) {
+                    // Если это главный экран, показываем таббар (если это не чат, см. ниже)
+                     tabBar.style.display = 'flex'; 
+                     // Подсвечиваем активный таб
+                     const activeTab = document.querySelector(`.tab-button[data-screen="${screenId}"]`);
+                     if (activeTab) activeTab.classList.add('active');
+                } else {
+                    // На внутренних экранах скрываем таббар
+                    tabBar.style.display = 'none';
+                }
+
+                // Специфика экрана чата
+                if (screenId === 'screen-chat') {
+                    tabBar.style.display = 'none'; // В чате таббар не нужен, там поле ввода
+                    chatInput.classList.add('active');
+                } else {
+                    chatInput.classList.remove('active');
+                }
+            }
+        };
+
+        // === ПОДПИСКИ НА СОБЫТИЯ ===
+        
+        // 1. Клик по нативной кнопке "Назад"
+        tg.BackButton.onClick(Nav.back);
+
+        // 2. Клики по табам
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', () => Nav.to(btn.dataset.screen));
         });
 
-        function goToPage2() {
-            document.getElementById('page1').classList.remove('active');
-            document.getElementById('page2').classList.add('active');
-            tg.BackButton.show(); // Показываем стрелку "Назад"
-        }
     </script>
 </body>
 </html>
