@@ -278,6 +278,120 @@
         
         .skeleton { background: linear-gradient(90deg, var(--element-bg) 25%, var(--bg-primary) 50%, var(--element-bg) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s ease-in-out infinite; border-radius: 10px; }
         @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* === СТРАНИЦА ТОВАРА (Product Details) === */
+
+        /* Основной контейнер */
+        .details-card {
+            padding: 25px;       /* Внутренний воздух */
+            margin-bottom: 20px; /* Отступ снизу, если будет что-то еще */
+        }
+
+        /* Заголовок секции внутри товара (Рейтинг, КБЖУ, Состав) */
+        .details-section-title {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 10px; /* Отступ от заголовка до контента секции */
+            margin-top: 20px;    /* Отступ сверху от предыдущей секции */
+        }
+        /* Убираем отступ у первого заголовка */
+        .details-section-title:first-child { margin-top: 0; }
+
+        /* Верхняя часть: Рейтинг и Фото */
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px; /* Отступ до фото */
+        }
+        .details-rating-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Фото товара на странице деталей */
+        .details-img-container {
+            /* Используем те же миксины вдавленности, что и в каталоге, но без внешних отступов */
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 15px; /* Внутренний отступ для картинки */
+            border: 1px solid var(--border-subtle);
+            box-shadow: inset 0 6px 10px 0 var(--indent-shadow-top), inset 0 -4px 8px 0 var(--indent-highlight-bottom);
+            margin-bottom: 20px; /* Отступ до названия */
+        }
+        .details-img {
+            width: 100%;
+            height: 200px;       /* Картинка крупнее, чем в каталоге */
+            object-fit: cover;
+            border-radius: 15px;
+            display: block;      /* Убираем нижний технический отступ инлайновых элементов */
+        }
+
+        /* Название и цена */
+        .details-title {
+            font-size: 24px;
+            margin: 0 0 5px 0;   /* Отступ 5px снизу до цены */
+        }
+        .details-price {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin: 0 0 20px 0;  /* Отступ 20px снизу до описания */
+        }
+
+        /* Блок КБЖУ */
+        .kbzhu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 равные колонки */
+            gap: 10px;
+            text-align: center;
+            padding: 15px;       /* Внутренние отступы блока КБЖУ */
+        }
+        .kbzhu-val {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        .kbzhu-label {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        /* Блок состава */
+        .composition-box {
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 15px;
+            background: var(--element-bg); /* Немного отличается фон для контраста */
+            /* Вдавленный эффект для текста */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 15px;
+        }
+
+        /* Кнопки действий внизу */
+        .details-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;           /* Расстояние между кнопками */
+            margin-top: 30px;    /* Отступ от последнего блока контента до кнопок */
+        }
+        .action-btn-main {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+        /* Зеленая кнопка "Добавить" */
+        .btn-green {
+            background: #27ae60 !important; /* Принудительно зеленый */
+            color: white !important;
+            border: none !important; /* Убираем серую рамку */
+        }
     </style>
 </head>
 <body>
@@ -303,68 +417,7 @@
                     <button class="btn-outset" id="sort-btn" onclick="ModalOrchestrator.show('sort')">Сортировать</button>
                     <button class="btn-outset" id="filter-btn" onclick="ModalOrchestrator.show('filter')">Фильтрация</button>
                 </div>
-                <div class="catalog-grid" id="catalog-grid">
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                        <div class="img-container"><img src="https://placehold.co/150x100/27ae60/FFF?text=Йогурт" alt="Йогурт Чудо" /><div class="product-rating" style="background-color:#27ae60;">8.7</div></div><button class="btn-outset">Йогурт Чудо Вишня</button><p class="product-price">89.90 руб.</p>
-                    </div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                        <div class="img-container"><img src="https://placehold.co/150x100/f39c12/FFF?text=Хлебцы" alt="Хлебцы" /><div class="product-rating" style="background-color:#f39c12;">4.2</div></div><button class="btn-outset">Хлебцы Fit Start</button><p class="product-price">125.00 руб.</p>
-                    </div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                        <div class="img-container"><img src="https://placehold.co/150x100/c0392b/FFF?text=Продукт" alt="Продукт" /><div class="product-rating" style="background-color:#c0392b;">2.1</div></div><button class="btn-outset">Круассан Обычный</button><p class="product-price">45.50 руб.</p>
-                    </div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Мясо" alt="Мясо" /><div class="product-rating" style="background-color:#27ae60;">9.1</div></div><button class="btn-outset">Фарш Говяжий</button><p class="product-price">350.00 руб.</p></div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Чай" alt="Чай" /><div class="product-rating" style="background-color:#27ae60;">7.8</div></div><button class="btn-outset">Чай Зеленый</button><p class="product-price">220.00 руб.</p></div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)"><div class="img-container"><img src="https://placehold.co/150x100/555/FFF?text=Напиток" alt="Напиток" /><div class="product-rating" style="background-color:#f39c12;">5.5</div></div><button class="btn-outset">Газировка 'Сладость'</button><p class="product-price">70.00 руб.</p></div>
-                    <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/8e44ad/FFF?text=Смузи" alt="Смузи" />
-                        <div class="product-rating" style="background-color:#8e44ad;">9.5</div>
-                    </div>
-                    <button class="btn-outset">Смузи Ягодный Микс</button>
-                    <p class="product-price">180.00 руб.</p>
-                </div>
-                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/2980b9/FFF?text=Вода" alt="Вода" />
-                        <div class="product-rating" style="background-color:#2980b9;">8.0</div>
-                    </div>
-                    <button class="btn-outset">Минеральная Вода</button>
-                    <p class="product-price">45.00 руб.</p>
-                </div>
-                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/d35400/FFF?text=Орехи" alt="Орехи" />
-                        <div class="product-rating" style="background-color:#27ae60;">9.8</div>
-                    </div>
-                    <button class="btn-outset">Миндаль Жареный</button>
-                    <p class="product-price">320.00 руб.</p>
-                </div>
-                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/2c3e50/FFF?text=Кофе" alt="Кофе" />
-                        <div class="product-rating" style="background-color:#f39c12;">7.5</div>
-                    </div>
-                    <button class="btn-outset">Холодный Кофе</button>
-                    <p class="product-price">140.00 руб.</p>
-                </div>
-                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/c0392b/FFF?text=Шоколад" alt="Шоколад" />
-                        <div class="product-rating" style="background-color:#c0392b;">3.5</div>
-                    </div>
-                    <button class="btn-outset">Молочный Шоколад</button>
-                    <p class="product-price">95.00 руб.</p>
-                </div>
-                <div class="product-card" onclick="ProductDetailsScreen.show(this)">
-                    <div class="img-container">
-                        <img src="https://placehold.co/150x100/27ae60/FFF?text=Салат" alt="Салат" />
-                        <div class="product-rating" style="background-color:#27ae60;">9.9</div>
-                    </div>
-                    <button class="btn-outset">Салат Цезарь BIO</button>
-                    <p class="product-price">280.00 руб.</p>
-                </div>
-                </div>
+                <div class="catalog-grid" id="catalog-grid"></div>
             </div>
 
             <div id="chat-screen" class="screen"> 
@@ -440,12 +493,58 @@
     <div id="toast-notification" class="toast"></div>
 
     <script>
-        // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        if (tg.requestFullscreen) tg.requestFullscreen();
-        // Красим шапку в цвет фона (хорошая практика для Fullscreen)
-        if (tg.setHeaderColor) tg.setHeaderColor(getComputedStyle(document.body).getPropertyValue('--bg-primary').trim());
+            // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
+            const tg = window.Telegram.WebApp;
+            tg.ready();
+            if (tg.requestFullscreen) tg.requestFullscreen();
+            // Красим шапку в цвет фона (хорошая практика для Fullscreen)
+            if (tg.setHeaderColor) tg.setHeaderColor(getComputedStyle(document.body).getPropertyValue('--bg-primary').trim());
+
+            // 1. РАСШИРЕННАЯ БАЗА ДАННЫХ (для синьорской страницы товара)
+            const PRODUCTS_DATA = [
+                {
+                    id: 1, name: 'Йогурт Чудо Вишня', price: 89.90, rating: 8.7, color: '#27ae60',
+                    img: 'https://placehold.co/150x100/27ae60/FFF?text=Йогурт',
+                    description: 'Натуральный йогурт с большими кусочками спелой вишни. Идеален для легкого завтрака или полезного перекуса в течение дня.',
+                    kbzhu: { kkal: 110, proteins: 3.2, fats: 2.5, carbs: 15.0 },
+                    composition: 'Молоко нормализованное, фруктовый наполнитель (вишня, сахар, вода, загуститель Е1442, натуральные ароматизаторы, регулятор кислотности - лимонная кислота, краситель - кармины), сахар, закваска.'
+                },
+                {
+                    id: 2, name: 'Хлебцы Fit Start', price: 125.00, rating: 4.2, color: '#f39c12',
+                    img: 'https://placehold.co/150x100/f39c12/FFF?text=Хлебцы',
+                    description: 'Цельнозерновые гречневые хлебцы без глютена. Богаты клетчаткой, способствуют улучшению пищеварения.',
+                    kbzhu: { kkal: 320, proteins: 10.0, fats: 2.0, carbs: 65.0 },
+                    composition: 'Крупа гречневая ядрица, рис бурый, соль морская пищевая.'
+                },
+                { id: 3, name: 'Круассан Обычный', price: 45.50, rating: 2.1, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Продукт' },
+                { id: 4, name: 'Фарш Говяжий', price: 350.00, rating: 9.1, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Мясо' },
+                { id: 5, name: 'Чай Зеленый', price: 220.00, rating: 7.8, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Чай' },
+                { id: 6, name: 'Газировка \'Сладость\'', price: 70.00, rating: 5.5, color: '#f39c12', img: 'https://placehold.co/150x100/555/FFF?text=Напиток' },
+                { id: 7, name: 'Смузи Ягодный Микс', price: 180.00, rating: 9.5, color: '#8e44ad', img: 'https://placehold.co/150x100/8e44ad/FFF?text=Смузи' },
+                { id: 8, name: 'Минеральная Вода', price: 45.00, rating: 8.0, color: '#2980b9', img: 'https://placehold.co/150x100/2980b9/FFF?text=Вода' },
+                { id: 9, name: 'Миндаль Жареный', price: 320.00, rating: 9.8, color: '#27ae60', img: 'https://placehold.co/150x100/d35400/FFF?text=Орехи' },
+                { id: 10, name: 'Холодный Кофе', price: 140.00, rating: 7.5, color: '#f39c12', img: 'https://placehold.co/150x100/2c3e50/FFF?text=Кофе' },
+                { id: 11, name: 'Молочный Шоколад', price: 95.00, rating: 3.5, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Шоколад' },
+                { id: 12, name: 'Салат Цезарь BIO', price: 280.00, rating: 9.9, color: '#27ae60', img: 'https://placehold.co/150x100/27ae60/FFF?text=Салат' }
+            ];
+
+            // 2. Функция-"шаблонизатор" (ГЛАВНАЯ МАГИЯ)
+            function renderCatalog() {
+                const grid = document.getElementById('catalog-grid');
+                
+                // Мы генерируем HTML для каждого товара по ОДНОМУ шаблону
+                grid.innerHTML = PRODUCTS_DATA.map(product => `
+                    <div class="product-card" onclick="ProductDetailsScreen.show(${product.id})">
+                        <div class="img-container">
+                            <img src="${product.img}" alt="${product.name}" />
+                            <div class="product-rating" style="background-color:${product.color};">${product.rating}</div>
+                            
+                            <button class="btn-outset" style="width: 100%; margin-top: 10px;">${product.name}</button>
+                            <p class="product-price" style="margin-top: 5px;">${product.price.toFixed(2)} руб.</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
 
         const CONFIG = {
             ANIMATIONS: { TYPING_DURATION: 1500, TOAST_DURATION: 2000 },
@@ -480,7 +579,7 @@
         // === НАВИГАЦИЯ (Стек Истории) ===
         const Nav = {
             historyStack: [],
-            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE],
+            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE, CONFIG.SCREENS.CHAT], // Чат теперь тоже главный экран для таб-бара
             currentScreenId: CONFIG.SCREENS.CATALOG,
 
             to: (targetId) => {
@@ -558,18 +657,180 @@
         // === МОДУЛИ (ОСТАВЛЕНЫ БЕЗ ИЗМЕНЕНИЙ В ЛОГИКЕ) ===
         const ModalOrchestrator = { show: (type) => { Brick.haptic('medium'); Brick.addClass(document.getElementById('modal-overlay'), 'active'); }, hide: () => Brick.removeClass(document.getElementById('modal-overlay'), 'active'), apply: () => { ModalOrchestrator.hide(); Brick.showToast('Применено!'); } };
         const CatalogModule = { init: () => { document.getElementById('view-toggle').addEventListener('click', () => { document.getElementById('catalog-grid').classList.toggle('view-list'); Brick.haptic('light'); }); }, filterByCategory: (cat) => { Brick.showToast('Фильтр: ' + cat); Nav.to(CONFIG.SCREENS.CATALOG); } };
-        const ChatModule = { init: () => { document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key==='Enter') ChatModule.sendMessage(); }); }, sendMessage: () => { const i=document.getElementById('chat-input'); if(!i.value.trim())return; const c=document.getElementById('chat-messages'); c.innerHTML+=`<div class="chat-message user-message"><div class="chat-bubble btn-outset">${i.value}</div></div>`; i.value=''; const sc=DOM.getScrollContainer(); sc.scrollTop=sc.scrollHeight; setTimeout(()=>{c.innerHTML+=`<div class="chat-message ai-message"><div class="chat-bubble card-inset">Ответ ИИ...</div></div>`; sc.scrollTop=sc.scrollHeight;}, 1000); } };
-        const ProfileModule = { init: () => { document.getElementById('theme-toggle-profile').addEventListener('click', ProfileModule.toggleTheme); ProfileModule.updateThemeDisplay(); }, toggleTheme: () => { const h=DOM.getRoot(); const n=h.getAttribute('data-theme')==='light'?'dark':'light'; h.setAttribute('data-theme',n); TG_MOCK.WebApp.colorScheme = n; ProfileModule.updateThemeDisplay(); Brick.showToast('Тема: '+n); }, updateThemeDisplay: () => { const t = DOM.getRoot().getAttribute('data-theme'); document.getElementById('theme-label').textContent = 'Текущая: ' + (t==='light'?'Светлая':'Темная'); }, selectStore: (b) => { document.querySelectorAll('#store-screen .setting-button').forEach(bn=>Brick.removeClass(bn,'selected')); Brick.addClass(b,'selected'); Brick.showToast('Магазин выбран'); }, toggleAllergy: (el) => { Brick.haptic('light'); Brick.toggleClass(el.querySelector('.checkbox-switch'), 'done'); } };
-        const ProductDetailsScreen = { show: (c) => { document.getElementById('details-screen').innerHTML=`<div class="card-inset" style="padding:20px; margin-bottom:20px;"><div class="img-container" style="margin-bottom:15px;"><img src="${c.querySelector('img').src}" style="width:100%; border-radius:15px;"></div><h3>${c.querySelector('.btn-outset').textContent}</h3><p style="opacity:0.7; margin-top:10px;">Подробное описание товара, состав и КБЖУ...</p><button class="btn-outset" style="width:100%; margin-top:20px; background:var(--accent-color); color:white;">В корзину</button></div>`; Nav.to(CONFIG.SCREENS.DETAILS); } };
-        const ShoppingListModule = { toggleItem: (el) => { Brick.haptic('light'); Brick.toggleClass(el, 'done'); }, toggleHistory: (h) => { Brick.haptic('light'); const c=h.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none'; h.querySelector('.history-arrow').style.transform=c.style.display==='block'?'rotate(180deg)':'rotate(0deg)'; } };
+        const ChatModule = { 
+            init: () => { document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key==='Enter') ChatModule.sendMessage(); }); }, 
+            sendMessage: () => { 
+                const i=document.getElementById('chat-input'); 
+                if(!i.value.trim())return; 
+                const c=document.getElementById('chat-messages'); 
+                c.innerHTML+=`<div class="chat-message user-message"><div class="chat-bubble btn-outset">${i.value}</div></div>`; 
+                i.value=''; 
+                const sc=DOM.getScrollContainer(); 
+                sc.scrollTop=sc.scrollHeight; 
+                setTimeout(()=>{c.innerHTML+=`<div class="chat-message ai-message"><div class="chat-bubble card-inset">Ответ ИИ...</div></div>`; sc.scrollTop=sc.scrollHeight;}, 1000); 
+            },
+            // ГЛАВНОЕ ИЗМЕНЕНИЕ: функция отправки сообщения от ИИ теперь мощнее
+            sendAIMessage: (text, actions = []) => {
+                const chat = document.getElementById('chat-messages');
+                
+                // 1. Генерируем HTML для кнопок (если они есть)
+                let actionsHTML = '';
+                if (actions.length > 0) {
+                    actionsHTML = '<div class="chat-actions-container" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">';
+                    actions.forEach(action => {
+                        // action = { label: 'Добавить Сосиски', productName: 'Сосиски' }
+                        actionsHTML += `
+                            <button class="chat-action-btn" onclick="ShoppingListModule.addItem('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено';">
+                                ${action.label}
+                            </button>
+                        `;
+                    });
+                    actionsHTML += '</div>';
+                }
+
+                // 2. Добавляем сообщение с анимацией (упрощенно для примера без задержки typing)
+                chat.innerHTML += `
+                    <div class="chat-message ai-message">
+                        <div class="chat-bubble card-inset">
+                            ${text}
+                            ${actionsHTML} 
+                        </div>
+                    </div>`;
+                ChatModule.scrollToBottom();
+            },
+            askAI: (productId) => {
+                // Находим товар по ID
+                const product = PRODUCTS_DATA.find(p => p.id === productId);
+                if (!product) return;
+                
+                // Формируем промпт для ИИ с проверкой наличия данных
+                let prompt = `Расскажи мне о продукте "${product.name}". `;
+                if (product.composition) prompt += `Его состав: ${product.composition}. `;
+                if (product.kbzhu) prompt += `Пищевая ценность: ${product.kbzhu.kkal} ккал, ${product.kbzhu.proteins}г белка, ${product.kbzhu.fats}г жиров, ${product.kbzhu.carbs}г углеводов. `;
+                prompt += `Опиши его пользу, возможные противопоказания и дай рекомендации по употреблению.`;
+                
+                // Переходим в чат
+                Nav.to(CONFIG.SCREENS.CHAT);
+                
+                // Показываем сообщение пользователя (промпт)
+                const chatContainer = document.getElementById('chat-messages');
+                chatContainer.innerHTML += `
+                    <div class="chat-message user-message">
+                        <div class="chat-bubble btn-outset">${prompt}</div>
+                    </div>
+                `;
+                
+                // Скроллим вниз
+                const scrollContainer = DOM.getScrollContainer();
+                scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                
+                // Имитируем ответ ИИ (в реальности здесь был бы запрос к API)
+                    setTimeout(() => {
+                        // Пример использования sendAIMessage с кнопками действий
+                        ChatModule.sendAIMessage(
+                            `Анализирую состав продукта "${product.name}"...<br><br>
+                            💪 <b>Польза:</b> ${product.description}<br><br>
+                            📋 <b>Рекомендации:</b> Отличный выбор для здорового питания! 
+                            Содержит полезные нутриенты и подходит для ежедневного употребления.`,
+                            [
+                                { label: `+ ${product.name}`, productName: product.name }
+                            ]
+                        );
+                    }, 1500);
+            },
+            scrollToBottom: () => { const sc = DOM.getScrollContainer(); sc.scrollTop = sc.scrollHeight; }
+        };
+        const ProfileModule = { init: () => { document.getElementById('theme-toggle-profile').addEventListener('click', ProfileModule.toggleTheme); ProfileModule.updateThemeDisplay(); }, toggleTheme: () => { const h=DOM.getRoot(); const n=h.getAttribute('data-theme')==='light'?'dark':'light'; h.setAttribute('data-theme',n); tg.setHeaderColor(n==='light'?'#D1D9E6':'#25282E'); ProfileModule.updateThemeDisplay(); Brick.showToast('Тема: '+n); }, updateThemeDisplay: () => { const t = DOM.getRoot().getAttribute('data-theme'); document.getElementById('theme-label').textContent = 'Текущая: ' + (t==='light'?'Светлая':'Темная'); }, selectStore: (b) => { document.querySelectorAll('#store-screen .setting-button').forEach(bn=>Brick.removeClass(bn,'selected')); Brick.addClass(b,'selected'); Brick.showToast('Магазин выбран'); }, toggleAllergy: (el) => { Brick.haptic('light'); Brick.toggleClass(el.querySelector('.checkbox-switch'), 'done'); } };
+        const ProductDetailsScreen = { 
+            show: (productId) => {
+                // Находим товар по ID
+                const product = PRODUCTS_DATA.find(p => p.id === productId);
+                if (!product) return;
+                
+                // Генерируем HTML из шаблона с реальными данными
+                document.getElementById('details-screen').innerHTML = `
+                    <div class="details-card card-inset">
+                        <div class="details-header">
+                            <div class="details-rating-badge" style="background-color:${product.color};">${product.rating}</div>
+                        </div>
+                        
+                        <div class="details-img-container">
+                            <img src="${product.img}" alt="${product.name}" class="details-img" />
+                        </div>
+                        
+                        <h2 class="details-title">${product.name}</h2>
+                        <div class="details-price">${product.price.toFixed(2)} руб.</div>
+                        
+                        ${product.description ? `<p>${product.description}</p>` : ''}
+                        
+                        ${product.kbzhu ? `
+                        <div class="details-section-title">КБЖУ (на 100г)</div>
+                        <div class="kbzhu-grid card-inset">
+                            <div><div class="kbzhu-val">${product.kbzhu.kkal}</div><div class="kbzhu-label">Ккал</div></div>
+                            <div><div class="kbzhu-val">${product.kbzhu.proteins}</div><div class="kbzhu-label">Белки</div></div>
+                            <div><div class="kbzhu-val">${product.kbzhu.fats}</div><div class="kbzhu-label">Жиры</div></div>
+                            <div><div class="kbzhu-val">${product.kbzhu.carbs}</div><div class="kbzhu-label">Углеводы</div></div>
+                        </div>
+                        ` : ''}
+                        
+                        ${product.composition ? `
+                        <div class="details-section-title">Состав</div>
+                        <div class="composition-box">${product.composition}</div>
+                        ` : ''}
+                        
+                        <div class="details-actions">
+                            <button class="action-btn-main btn-outset btn-green" onclick="ShoppingListModule.addItem('${product.name}')">
+                                + Добавить в список
+                            </button>
+                            
+                            <button class="btn-outset action-btn-main" onclick="ChatModule.askAI(${product.id})">
+                                <span class="icon-ai">🤖</span> Спросить ИИ о составе
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                Nav.to(CONFIG.SCREENS.DETAILS);
+            }
+        };
+        const ShoppingListModule = { 
+            addItem: (name) => {
+                // 1. Находим контейнер списка (сегодняшний)
+                const listContainer = document.querySelector('#list-screen .list-group:first-child .list-container');
+                
+                // 2. Создаем HTML нового элемента
+                // Мы используем те же классы (list-item, card-inset), чтобы стиль сохранился.
+                const newItemHTML = `
+                    <div class="list-item card-inset" onclick="ShoppingListModule.toggleItem(this)">
+                        <span class="item-name">${name}</span>
+                        <div class="checkbox-switch btn-outset">
+                            <div class="checkbox-slider"></div>
+                        </div>
+                    </div>
+                `;
+                
+                // 3. Вставляем в НАЧАЛО списка (afterbegin)
+                listContainer.insertAdjacentHTML('afterbegin', newItemHTML);
+                
+                // 4. Визуальная обратная связь
+                Brick.haptic('success');
+                // Если мы НЕ на экране списка, покажем тост. Если уже там — пользователь и так увидит.
+                if (Nav.currentScreenId !== CONFIG.SCREENS.LIST) {
+                    Brick.showToast(`✅ Добавлено: ${name}`);
+                }
+            },
+            toggleItem: (el) => { Brick.haptic('light'); Brick.toggleClass(el, 'done'); }, 
+            toggleHistory: (h) => { Brick.haptic('light'); const c=h.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none'; h.querySelector('.history-arrow').style.transform=c.style.display==='block'?'rotate(180deg)':'rotate(0deg)'; } 
+        };
 
         // === ЗАПУСК ===
         document.addEventListener('DOMContentLoaded', () => {
-            CatalogModule.init(); ChatModule.init(); ProfileModule.init();
-            DOM.getTabButtons().forEach(btn => btn.addEventListener('click', (e) => Nav.to(e.currentTarget.dataset.target)));
-            document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) ModalOrchestrator.hide(); });
-            Nav.to(CONFIG.SCREENS.CATALOG); // Старт с каталога
-        });
+                CatalogModule.init(); ChatModule.init(); ProfileModule.init();
+                DOM.getTabButtons().forEach(btn => btn.addEventListener('click', (e) => Nav.to(e.currentTarget.dataset.target)));
+                document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) ModalOrchestrator.hide(); });
+                Nav.to(CONFIG.SCREENS.CATALOG); // Старт с каталога
+                renderCatalog(); // <--- Добавить вызов
+            });
     </script>
 </body>
 </html>
