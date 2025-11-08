@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Test Safe Areas</title>
+    <title>Test Sum Safe Areas</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
         body {
@@ -15,17 +15,19 @@
         }
 
         .safe-area-container {
-            /* ТЕСТ: Пробуем довериться только content-safe-area */
-            padding-top: var(--tg-content-safe-area-inset-top);
+            /* ТВОЯ ГИПОТЕЗА: Складываем обе зоны вместе */
+            padding-top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
             
-            /* Боковые отступы: берем системный + твои 15px */
-            padding-left: calc(var(--tg-content-safe-area-inset-left) + 15px);
-            padding-right: calc(var(--tg-content-safe-area-inset-right) + 15px);
-            padding-bottom: calc(var(--tg-content-safe-area-inset-bottom) + 15px);
+            /* Бока: Системная защита + 15px */
+            padding-left: calc(var(--tg-safe-area-inset-left) + 15px);
+            padding-right: calc(var(--tg-safe-area-inset-right) + 15px);
+            
+            /* Низ: Складываем, вдруг там тоже надо? (для теста) */
+             padding-bottom: calc(var(--tg-safe-area-inset-bottom) + var(--tg-content-safe-area-inset-bottom) + 15px);
 
             box-sizing: border-box;
             min-height: 100vh;
-            border: 2px solid red; /* Красная рамка, чтобы видеть границы контейнера */
+            border: 2px solid blue; /* Синяя рамка для наглядности */
         }
 
         .debug-info {
@@ -40,12 +42,10 @@
 </head>
 <body>
     <div class="safe-area-container">
-        <h1>Заголовок страницы</h1>
-        <p>Текст под заголовком.</p>
+        <h1>Заголовок (Сумма зон)</h1>
+        <p>Этот текст использует сумму safe-area + content-safe-area.</p>
         
-        <div class="debug-info" id="debug">
-            Загрузка данных...
-        </div>
+        <div class="debug-info" id="debug">Loading...</div>
     </div>
 
     <script>
@@ -53,27 +53,22 @@
         tg.ready();
         if (tg.requestFullscreen) tg.requestFullscreen();
 
-        // Функция для вывода значений переменных на экран
         function updateDebugInfo() {
-            const safe = tg.safeAreaInset || {top: 0, bottom: 0, left: 0, right: 0};
-            const content = tg.contentSafeAreaInset || {top: 0, bottom: 0, left: 0, right: 0};
+            const safe = tg.safeAreaInset || {top: 0};
+            const content = tg.contentSafeAreaInset || {top: 0};
+            const sum = (safe.top || 0) + (content.top || 0);
 
             document.getElementById('debug').innerHTML = `
-                <b>Fullscreen:</b> ${tg.isFullscreen}<br>
-                <hr>
-                <b>tg-safe-area-inset-top:</b> ${safe.top}px<br>
-                <b>tg-content-safe-area-inset-top:</b> ${content.top}px<br>
-                <hr>
-                Если content-top меньше 50-60px в полноэкранном режиме,<br>
-                значит Telegram считает, что мы должны сами делать отступ под его кнопкой.
+                Safe Top: ${safe.top}px<br>
+                Content Top: ${content.top}px<br>
+                <b>SUM RESULT: ${sum}px</b>
             `;
         }
 
-        // Обновляем данные при запуске и при любых изменениях
-        updateDebugInfo();
         tg.onEvent('safeAreaChanged', updateDebugInfo);
         tg.onEvent('contentSafeAreaChanged', updateDebugInfo);
         tg.onEvent('fullscreenChanged', updateDebugInfo);
+        updateDebugInfo();
     </script>
 </body>
 </html>
