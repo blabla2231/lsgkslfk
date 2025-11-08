@@ -20,15 +20,11 @@
            Мы используем padding, чтобы контент внутри никогда не прилипал к краям. */
         .safe-area-container {
             /* Отступ сверху, чтобы не наехать на "челку" или шапку Telegram */
-            padding-top: var(--tg-content-safe-area-inset-top);
-            /* Отступы по бокам (на всякий случай) */
+            padding-top: calc(var(--tg-safe-area-inset-top) + 60px);
+
             padding-left: var(--tg-content-safe-area-inset-left);
             padding-right: var(--tg-content-safe-area-inset-right);
-            /* Отступ снизу - КРИТИЧНО для iPhone без кнопок, там где полоска "домой" */
             padding-bottom: var(--tg-content-safe-area-inset-bottom);
-
-            /* Дополнительные обычные отступы для красоты */
-            padding: calc(var(--tg-content-safe-area-inset-top) + 20px) 20px calc(var(--tg-content-safe-area-inset-bottom) + 20px) 20px;
             box-sizing: border-box;
             min-height: 100vh; /* Растягиваем на всю высоту */
         }
