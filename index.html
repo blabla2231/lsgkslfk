@@ -505,27 +505,87 @@
                 {
                     id: 1, name: 'Йогурт Чудо Вишня', price: 89.90, rating: 8.7, color: '#27ae60',
                     img: 'https://placehold.co/150x100/27ae60/FFF?text=Йогурт',
-                    description: 'Натуральный йогурт с большими кусочками спелой вишни. Идеален для легкого завтрака или полезного перекуса в течение дня.',
+                    description: 'Натуральный йогурт с кусочками вишни. Отличный перекус.',
                     kbzhu: { kkal: 110, proteins: 3.2, fats: 2.5, carbs: 15.0 },
-                    composition: 'Молоко нормализованное, фруктовый наполнитель (вишня, сахар, вода, загуститель Е1442, натуральные ароматизаторы, регулятор кислотности - лимонная кислота, краситель - кармины), сахар, закваска.'
+                    composition: 'Молоко нормализованное, фруктовый наполнитель (вишня, сахар, вода, Е1442), сахар, закваска.'
                 },
                 {
                     id: 2, name: 'Хлебцы Fit Start', price: 125.00, rating: 4.2, color: '#f39c12',
                     img: 'https://placehold.co/150x100/f39c12/FFF?text=Хлебцы',
-                    description: 'Цельнозерновые гречневые хлебцы без глютена. Богаты клетчаткой, способствуют улучшению пищеварения.',
+                    description: 'Гречневые хлебцы без глютена. Богаты клетчаткой.',
                     kbzhu: { kkal: 320, proteins: 10.0, fats: 2.0, carbs: 65.0 },
-                    composition: 'Крупа гречневая ядрица, рис бурый, соль морская пищевая.'
+                    composition: 'Крупа гречневая ядрица, рис бурый, соль морская.'
                 },
-                { id: 3, name: 'Круассан Обычный', price: 45.50, rating: 2.1, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Продукт' },
-                { id: 4, name: 'Фарш Говяжий', price: 350.00, rating: 9.1, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Мясо' },
-                { id: 5, name: 'Чай Зеленый', price: 220.00, rating: 7.8, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Чай' },
-                { id: 6, name: 'Газировка \'Сладость\'', price: 70.00, rating: 5.5, color: '#f39c12', img: 'https://placehold.co/150x100/555/FFF?text=Напиток' },
-                { id: 7, name: 'Смузи Ягодный Микс', price: 180.00, rating: 9.5, color: '#8e44ad', img: 'https://placehold.co/150x100/8e44ad/FFF?text=Смузи' },
-                { id: 8, name: 'Минеральная Вода', price: 45.00, rating: 8.0, color: '#2980b9', img: 'https://placehold.co/150x100/2980b9/FFF?text=Вода' },
-                { id: 9, name: 'Миндаль Жареный', price: 320.00, rating: 9.8, color: '#27ae60', img: 'https://placehold.co/150x100/d35400/FFF?text=Орехи' },
-                { id: 10, name: 'Холодный Кофе', price: 140.00, rating: 7.5, color: '#f39c12', img: 'https://placehold.co/150x100/2c3e50/FFF?text=Кофе' },
-                { id: 11, name: 'Молочный Шоколад', price: 95.00, rating: 3.5, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Шоколад' },
-                { id: 12, name: 'Салат Цезарь BIO', price: 280.00, rating: 9.9, color: '#27ae60', img: 'https://placehold.co/150x100/27ae60/FFF?text=Салат' }
+                {
+                    id: 3, name: 'Круассан Обычный', price: 45.50, rating: 2.1, color: '#c0392b',
+                    img: 'https://placehold.co/150x100/c0392b/FFF?text=Выпечка',
+                    description: 'Классический круассан на маргарине. Содержит много трансжиров.',
+                    kbzhu: { kkal: 450, proteins: 6.0, fats: 28.0, carbs: 48.0 },
+                    composition: 'Мука пшеничная в/с, маргарин (рафинированные дезодорированные растительные масла, вода, эмульгаторы (Е471, Е475)), вода, сахар, дрожжи, соль.'
+                },
+                {
+                    id: 4, name: 'Фарш Говяжий', price: 350.00, rating: 9.1, color: '#27ae60',
+                    img: 'https://placehold.co/150x100/555/FFF?text=Мясо',
+                    description: 'Охлажденный говяжий фарш категории А. Идеален для котлет и болоньезе.',
+                    kbzhu: { kkal: 290, proteins: 17.0, fats: 25.0, carbs: 0.0 },
+                    composition: 'Говядина 100%.'
+                },
+                {
+                    id: 5, name: 'Чай Зеленый', price: 220.00, rating: 7.8, color: '#27ae60',
+                    img: 'https://placehold.co/150x100/555/FFF?text=Чай',
+                    description: 'Листовой зеленый чай, крупный лист. Богат антиоксидантами.',
+                    kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 },
+                    composition: 'Чай зеленый байховый крупнолистовой.'
+                },
+                {
+                    id: 6, name: 'Газировка "Сладость"', price: 70.00, rating: 5.5, color: '#f39c12',
+                    img: 'https://placehold.co/150x100/555/FFF?text=Напиток',
+                    description: 'Сильногазированный сладкий напиток. Содержит много сахара.',
+                    kbzhu: { kkal: 45, proteins: 0, fats: 0, carbs: 11.0 },
+                    composition: 'Вода очищенная, сахар, диоксид углерода, регулятор кислотности (лимонная кислота), ароматизаторы, консервант (бензоат натрия).'
+                },
+                {
+                    id: 7, name: 'Смузи Ягодный Микс', price: 180.00, rating: 9.5, color: '#8e44ad',
+                    img: 'https://placehold.co/150x100/8e44ad/FFF?text=Смузи',
+                    description: 'Натуральный смузи без добавления сахара. Только фрукты и ягоды.',
+                    kbzhu: { kkal: 55, proteins: 0.8, fats: 0.2, carbs: 13.5 },
+                    composition: 'Пюре банана, сок яблочный, пюре клубники, сок малины, сок черной смородины.'
+                },
+                {
+                    id: 8, name: 'Минеральная Вода', price: 45.00, rating: 8.0, color: '#2980b9',
+                    img: 'https://placehold.co/150x100/2980b9/FFF?text=Вода',
+                    description: 'Природная питьевая минеральная вода, газированная.',
+                    kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 },
+                    composition: 'Вода минеральная природная столовая.'
+                },
+                {
+                    id: 9, name: 'Миндаль Жареный', price: 320.00, rating: 9.8, color: '#27ae60',
+                    img: 'https://placehold.co/150x100/d35400/FFF?text=Орехи',
+                    description: 'Отборный жареный миндаль. Отличный источник полезных жиров и белка.',
+                    kbzhu: { kkal: 645, proteins: 18.6, fats: 57.7, carbs: 16.2 },
+                    composition: 'Ядра миндаля обжаренные.'
+                },
+                {
+                    id: 10, name: 'Холодный Кофе', price: 140.00, rating: 7.5, color: '#f39c12',
+                    img: 'https://placehold.co/150x100/2c3e50/FFF?text=Кофе',
+                    description: 'Кофейный напиток на молочной основе. Бодрит и освежает.',
+                    kbzhu: { kkal: 75, proteins: 2.9, fats: 1.5, carbs: 12.0 },
+                    composition: 'Молоко нормализованное, вода, сахар, экстракт кофе, карамель.'
+                },
+                {
+                    id: 11, name: 'Молочный Шоколад', price: 95.00, rating: 3.5, color: '#c0392b',
+                    img: 'https://placehold.co/150x100/c0392b/FFF?text=Шоколад',
+                    description: 'Классический молочный шоколад. Высокое содержание сахара.',
+                    kbzhu: { kkal: 550, proteins: 7.0, fats: 34.0, carbs: 53.0 },
+                    composition: 'Сахар, масло какао, тертое какао, сухое цельное молоко, сухая молочная сыворотка, эмульгаторы (лецитин соевый, Е476), ароматизатор.'
+                },
+                {
+                    id: 12, name: 'Салат Цезарь BIO', price: 280.00, rating: 9.9, color: '#27ae60',
+                    img: 'https://placehold.co/150x100/27ae60/FFF?text=Салат',
+                    description: 'Свежий салат с куриной грудкой су-вид и легким йогуртовым соусом.',
+                    kbzhu: { kkal: 160, proteins: 12.0, fats: 8.0, carbs: 5.0 },
+                    composition: 'Салат айсберг, филе куриной грудки, томаты черри, сыр пармезан, сухарики пшеничные, соус (йогурт натуральный, горчица, специи).'
+                }
             ];
 
             // 2. Функция-"шаблонизатор" (ГЛАВНАЯ МАГИЯ)
@@ -579,7 +639,7 @@
         // === НАВИГАЦИЯ (Стек Истории) ===
         const Nav = {
             historyStack: [],
-            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE, CONFIG.SCREENS.CHAT], // Чат теперь тоже главный экран для таб-бара
+            mainScreens: [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE], // Чат убран из главных экранов
             currentScreenId: CONFIG.SCREENS.CATALOG,
 
             to: (targetId) => {
@@ -655,7 +715,19 @@
         tg.BackButton.onClick(Nav.back);
 
         // === МОДУЛИ (ОСТАВЛЕНЫ БЕЗ ИЗМЕНЕНИЙ В ЛОГИКЕ) ===
-        const ModalOrchestrator = { show: (type) => { Brick.haptic('medium'); Brick.addClass(document.getElementById('modal-overlay'), 'active'); }, hide: () => Brick.removeClass(document.getElementById('modal-overlay'), 'active'), apply: () => { ModalOrchestrator.hide(); Brick.showToast('Применено!'); } };
+        const ModalOrchestrator = {
+            show: (title, bodyContent, hideDefaultButton = false) => {
+                Brick.haptic('medium');
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-body').innerHTML = bodyContent;
+                // Скрываем/показываем стандартную кнопку "Применить"
+                document.querySelector('#modal-overlay > .modal-content > .btn-outset').style.display = hideDefaultButton ? 'none' : 'block';
+                Brick.addClass(document.getElementById('modal-overlay'), 'active');
+            },
+            hide: () => Brick.removeClass(document.getElementById('modal-overlay'), 'active'),
+            // Для старых вызовов (сортировка/фильтры) можно оставить заглушки или перевести их на новый метод
+            apply: () => { ModalOrchestrator.hide(); Brick.showToast('Применено!'); }
+        };
         const CatalogModule = { init: () => { document.getElementById('view-toggle').addEventListener('click', () => { document.getElementById('catalog-grid').classList.toggle('view-list'); Brick.haptic('light'); }); }, filterByCategory: (cat) => { Brick.showToast('Фильтр: ' + cat); Nav.to(CONFIG.SCREENS.CATALOG); } };
         const ChatModule = { 
             init: () => { document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key==='Enter') ChatModule.sendMessage(); }); }, 
@@ -680,7 +752,7 @@
                     actions.forEach(action => {
                         // action = { label: 'Добавить Сосиски', productName: 'Сосиски' }
                         actionsHTML += `
-                            <button class="chat-action-btn" onclick="ShoppingListModule.addItem('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено';">
+                            <button class="chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено';">
                                 ${action.label}
                             </button>
                         `;
@@ -779,7 +851,7 @@
                         ` : ''}
                         
                         <div class="details-actions">
-                            <button class="action-btn-main btn-outset btn-green" onclick="ShoppingListModule.addItem('${product.name}')">
+                            <button class="action-btn-main btn-outset btn-green" onclick="ShoppingListModule.addItemWithModal('${product.name}')">
                                 + Добавить в список
                             </button>
                             
@@ -794,30 +866,31 @@
             }
         };
         const ShoppingListModule = { 
+            // Базовое добавление (как было)
             addItem: (name) => {
-                // 1. Находим контейнер списка (сегодняшний)
                 const listContainer = document.querySelector('#list-screen .list-group:first-child .list-container');
-                
-                // 2. Создаем HTML нового элемента
-                // Мы используем те же классы (list-item, card-inset), чтобы стиль сохранился.
                 const newItemHTML = `
                     <div class="list-item card-inset" onclick="ShoppingListModule.toggleItem(this)">
                         <span class="item-name">${name}</span>
-                        <div class="checkbox-switch btn-outset">
-                            <div class="checkbox-slider"></div>
-                        </div>
-                    </div>
-                `;
-                
-                // 3. Вставляем в НАЧАЛО списка (afterbegin)
+                        <div class="checkbox-switch btn-outset"><div class="checkbox-slider"></div></div>
+                    </div>`;
                 listContainer.insertAdjacentHTML('afterbegin', newItemHTML);
-                
-                // 4. Визуальная обратная связь
                 Brick.haptic('success');
-                // Если мы НЕ на экране списка, покажем тост. Если уже там — пользователь и так увидит.
-                if (Nav.currentScreenId !== CONFIG.SCREENS.LIST) {
-                    Brick.showToast(`✅ Добавлено: ${name}`);
-                }
+            },
+            // НОВАЯ ФУНКЦИЯ: Добавление с модалкой (то, что вы просили)
+            addItemWithModal: (name) => {
+                ShoppingListModule.addItem(name); // Сначала реально добавляем
+                
+                // Показываем модалку
+                ModalOrchestrator.show(
+                    '✅ Добавлено!',
+                    `<p style="text-align: center; opacity: 0.7; margin-bottom: 20px;">Товар <b>"${name}"</b> теперь в вашем списке покупок.</p>
+                     <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn-outset btn-green" onclick="ModalOrchestrator.hide(); Nav.to(CONFIG.SCREENS.LIST);">Перейти к списку</button>
+                        <button class="btn-outset" onclick="ModalOrchestrator.hide()">Остаться здесь</button>
+                     </div>`,
+                    true // Скрыть стандартную кнопку "Применить"
+                );
             },
             toggleItem: (el) => { Brick.haptic('light'); Brick.toggleClass(el, 'done'); }, 
             toggleHistory: (h) => { Brick.haptic('light'); const c=h.nextElementSibling; c.style.display=c.style.display==='none'?'block':'none'; h.querySelector('.history-arrow').style.transform=c.style.display==='block'?'rotate(180deg)':'rotate(0deg)'; } 
