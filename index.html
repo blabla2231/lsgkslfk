@@ -35,9 +35,12 @@
             /* Переменные для управления компонентами */
             --current-bottom-bar-height: 100px;
 
-            /* Safe Area */
-            --tg-safe-area-inset-top: 30px; 
-            --tg-safe-area-inset-bottom: 34px; 
+            /* НОВЫЕ ПЕРЕМЕННЫЕ */
+            --bottom-bar-height: 80px;        /* высота таб-бара */
+            --bottom-bar-offset: 15px;        /* отступ снизу */
+            --bottom-bar-gap: 15px;           /* зазор над баром */
+
+ 
         }
 
         [data-theme="dark"] {
@@ -89,7 +92,7 @@
         }
 
         .content {
-            padding: 15px 15px calc(var(--tg-safe-area-inset-bottom, 0px) + var(--current-bottom-bar-height) + 20px) 15px;
+            padding: 15px 15px calc(var(--bottom-bar-height) + var(--bottom-bar-offset) + var(--bottom-bar-gap)) 15px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             flex-grow: 1;
@@ -168,9 +171,9 @@
             left: 15px;
             right: 15px;
             z-index: 100;
-            bottom: calc(20px + var(--tg-safe-area-inset-bottom, 0px)); 
+            bottom: var(--bottom-bar-offset);
             max-width: 390px;
-            height: 80px; 
+            height: var(--bottom-bar-height); 
             background: var(--glass-glossy-bg); 
             backdrop-filter: blur(15px); 
             -webkit-backdrop-filter: blur(15px);
@@ -231,7 +234,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            bottom: 15px;
+            bottom: var(--bottom-bar-offset);
             padding: 0 15px;
             display: flex;
             align-items: center;
@@ -514,6 +517,10 @@
             fill: var(--text-color);
             width: 24px;
             height: 24px;
+        }
+
+        .chat-screen {
+            --bottom-bar-height: 50px;  /* высота кнопки отправки */
         }
 
         /* ================================================================== */
@@ -1008,7 +1015,6 @@
                 HEADER_HEIGHT: 56,
                 TAB_BAR_HEIGHT: 100,
                 CHAT_INPUT_HEIGHT: 100,
-                SAFE_AREA_BOTTOM: 34,
                 BORDER_RADIUS_DEFAULT: 20,
                 BORDER_RADIUS_BUTTON: 15,
                 PADDING_DEFAULT: 15,
@@ -1121,9 +1127,7 @@
                 };
                 DOM.getTitle().textContent = titles[screenId] || '';
 
-                // Высота таб-бара
-                const height = isChatScreen ? '80px' : '100px';
-                DOM.getRoot().style.setProperty('--current-bottom-bar-height', height);
+
             },
 
             switchScreen: (targetId) => {
