@@ -3,123 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Mini App Fullscreen Example</title>
+    <title>Test Safe Areas</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-
     <style>
-        /* Базовые стили, берем цвета из темы Telegram */
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: sans-serif;
             background-color: var(--tg-theme-bg-color, #fff);
             color: var(--tg-theme-text-color, #000);
         }
 
-        /* ГЛАВНОЕ: Контейнер, который защищает контент от наезда системных элементов.
-           Мы используем padding, чтобы контент внутри никогда не прилипал к краям. */
         .safe-area-container {
-            /* Отступ сверху, чтобы не наехать на "челку" или шапку Telegram */
-            padding-top: var(--tg-safe-area-inset-top);
-
-            padding-left: var(--tg-content-safe-area-inset-left);
-            padding-right: var(--tg-content-safe-area-inset-right);
-            padding-bottom: var(--tg-content-safe-area-inset-bottom);
-            box-sizing: border-box;
-            min-height: 100vh; /* Растягиваем на всю высоту */
-        }
-
-        /* Стили для страниц */
-        .page {
-            display: none; /* По умолчанию скрыты */
-        }
-        .page.active {
-            display: block; /* Показываем только активную */
-        }
-
-        /* Пример кнопки, которая ВСЕГДА прижата к низу, но в БЕЗОПАСНОЙ зоне */
-        .bottom-fixed-button {
-            position: fixed;
-            left: 20px;
-            right: 20px;
-            /* Самое важное: отступ снизу = безопасная зона + 20px отступа для красоты */
-            bottom: calc(var(--tg-content-safe-area-inset-bottom) + 20px);
+            /* ТЕСТ: Пробуем довериться только content-safe-area */
+            padding-top: var(--tg-content-safe-area-inset-top);
             
-            padding: 15px;
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            z-index: 100; /* Чтобы точно была поверх всего */
+            /* Боковые отступы: берем системный + твои 15px */
+            padding-left: calc(var(--tg-content-safe-area-inset-left) + 15px);
+            padding-right: calc(var(--tg-content-safe-area-inset-right) + 15px);
+            padding-bottom: calc(var(--tg-content-safe-area-inset-bottom) + 15px);
+
+            box-sizing: border-box;
+            min-height: 100vh;
+            border: 2px solid red; /* Красная рамка, чтобы видеть границы контейнера */
         }
 
-        h1 { margin-top: 0; }
-        p { opacity: 0.8; line-height: 1.5; }
+        .debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
-
     <div class="safe-area-container">
-
-        <div id="page1" class="page active">
-            <h1>Главная страница</h1>
-            <p>Это приложение запущено в полноэкранном режиме.</p>
-            <p>Текст не наезжает на системные часы сверху благодаря <code>padding-top</code> в контейнере.</p>
-            <p>Синяя кнопка внизу не перекрывается системной полоской управления благодаря <code>bottom</code> с учетом безопасной зоны.</p>
-
-            <button class="bottom-fixed-button" onclick="goToPage2()">
-                Перейти на страницу 2
-            </button>
+        <h1>Заголовок страницы</h1>
+        <p>Текст под заголовком.</p>
+        
+        <div class="debug-info" id="debug">
+            Загрузка данных...
         </div>
-
-        <div id="page2" class="page">
-            <h1>Вторая страница</h1>
-            <p>Теперь в шапке Telegram появилась кнопка «Назад» вместо крестика.</p>
-            <p>Если на неё нажать, мы вернемся на первую страницу.</p>
-        </div>
-
     </div>
 
     <script>
-        // Инициализация, получаем объект WebApp
         const tg = window.Telegram.WebApp;
-
-        // Сообщаем Telegram, что приложение готово к показу
         tg.ready();
+        if (tg.requestFullscreen) tg.requestFullscreen();
 
-        // 1. Просим перейти в полноэкранный режим
-        // (Работает в Bot API 8.0+, на старых версиях просто ничего не произойдет)
-        if (tg.requestFullscreen) {
-            tg.requestFullscreen();
+        // Функция для вывода значений переменных на экран
+        function updateDebugInfo() {
+            const safe = tg.safeAreaInset || {top: 0, bottom: 0, left: 0, right: 0};
+            const content = tg.contentSafeAreaInset || {top: 0, bottom: 0, left: 0, right: 0};
+
+            document.getElementById('debug').innerHTML = `
+                <b>Fullscreen:</b> ${tg.isFullscreen}<br>
+                <hr>
+                <b>tg-safe-area-inset-top:</b> ${safe.top}px<br>
+                <b>tg-content-safe-area-inset-top:</b> ${content.top}px<br>
+                <hr>
+                Если content-top меньше 50-60px в полноэкранном режиме,<br>
+                значит Telegram считает, что мы должны сами делать отступ под его кнопкой.
+            `;
         }
 
-        // 2. Настраиваем нативную кнопку "Назад"
-        // Когда на неё нажимают, вызываем функцию goBack()
-        tg.BackButton.onClick(goBack);
-
-        // Функции навигации
-        function goToPage2() {
-            // Переключаем видимость HTML-блоков
-            document.getElementById('page1').classList.remove('active');
-            document.getElementById('page2').classList.add('active');
-
-            // ГЛАВНОЕ: Показываем нативную кнопку "Назад" в интерфейсе Telegram
-            tg.BackButton.show();
-        }
-
-        function goBack() {
-            // Возвращаемся на первую страницу
-            document.getElementById('page2').classList.remove('active');
-            document.getElementById('page1').classList.add('active');
-
-            // ГЛАВНОЕ: Скрываем кнопку "Назад", возвращается обычный "Крестик" (или "Закрыть")
-            tg.BackButton.hide();
-        }
-
+        // Обновляем данные при запуске и при любых изменениях
+        updateDebugInfo();
+        tg.onEvent('safeAreaChanged', updateDebugInfo);
+        tg.onEvent('contentSafeAreaChanged', updateDebugInfo);
+        tg.onEvent('fullscreenChanged', updateDebugInfo);
     </script>
 </body>
 </html>
