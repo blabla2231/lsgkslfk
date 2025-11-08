@@ -493,118 +493,43 @@
     <div id="toast-notification" class="toast"></div>
 
     <script>
-            // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
-            const tg = window.Telegram.WebApp;
-            tg.ready();
-            if (tg.requestFullscreen) tg.requestFullscreen();
-            // Красим шапку в цвет фона (хорошая практика для Fullscreen)
-            if (tg.setHeaderColor) tg.setHeaderColor(getComputedStyle(document.body).getPropertyValue('--bg-primary').trim());
+        // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        if (tg.requestFullscreen) tg.requestFullscreen();
+        if (tg.setHeaderColor) tg.setHeaderColor(getComputedStyle(document.body).getPropertyValue('--bg-primary').trim());
 
-            // 1. РАСШИРЕННАЯ БАЗА ДАННЫХ (для синьорской страницы товара)
-            const PRODUCTS_DATA = [
-                {
-                    id: 1, name: 'Йогурт Чудо Вишня', price: 89.90, rating: 8.7, color: '#27ae60',
-                    img: 'https://placehold.co/150x100/27ae60/FFF?text=Йогурт',
-                    description: 'Натуральный йогурт с кусочками вишни. Отличный перекус.',
-                    kbzhu: { kkal: 110, proteins: 3.2, fats: 2.5, carbs: 15.0 },
-                    composition: 'Молоко нормализованное, фруктовый наполнитель (вишня, сахар, вода, Е1442), сахар, закваска.'
-                },
-                {
-                    id: 2, name: 'Хлебцы Fit Start', price: 125.00, rating: 4.2, color: '#f39c12',
-                    img: 'https://placehold.co/150x100/f39c12/FFF?text=Хлебцы',
-                    description: 'Гречневые хлебцы без глютена. Богаты клетчаткой.',
-                    kbzhu: { kkal: 320, proteins: 10.0, fats: 2.0, carbs: 65.0 },
-                    composition: 'Крупа гречневая ядрица, рис бурый, соль морская.'
-                },
-                {
-                    id: 3, name: 'Круассан Обычный', price: 45.50, rating: 2.1, color: '#c0392b',
-                    img: 'https://placehold.co/150x100/c0392b/FFF?text=Выпечка',
-                    description: 'Классический круассан на маргарине. Содержит много трансжиров.',
-                    kbzhu: { kkal: 450, proteins: 6.0, fats: 28.0, carbs: 48.0 },
-                    composition: 'Мука пшеничная в/с, маргарин (рафинированные дезодорированные растительные масла, вода, эмульгаторы (Е471, Е475)), вода, сахар, дрожжи, соль.'
-                },
-                {
-                    id: 4, name: 'Фарш Говяжий', price: 350.00, rating: 9.1, color: '#27ae60',
-                    img: 'https://placehold.co/150x100/555/FFF?text=Мясо',
-                    description: 'Охлажденный говяжий фарш категории А. Идеален для котлет и болоньезе.',
-                    kbzhu: { kkal: 290, proteins: 17.0, fats: 25.0, carbs: 0.0 },
-                    composition: 'Говядина 100%.'
-                },
-                {
-                    id: 5, name: 'Чай Зеленый', price: 220.00, rating: 7.8, color: '#27ae60',
-                    img: 'https://placehold.co/150x100/555/FFF?text=Чай',
-                    description: 'Листовой зеленый чай, крупный лист. Богат антиоксидантами.',
-                    kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 },
-                    composition: 'Чай зеленый байховый крупнолистовой.'
-                },
-                {
-                    id: 6, name: 'Газировка "Сладость"', price: 70.00, rating: 5.5, color: '#f39c12',
-                    img: 'https://placehold.co/150x100/555/FFF?text=Напиток',
-                    description: 'Сильногазированный сладкий напиток. Содержит много сахара.',
-                    kbzhu: { kkal: 45, proteins: 0, fats: 0, carbs: 11.0 },
-                    composition: 'Вода очищенная, сахар, диоксид углерода, регулятор кислотности (лимонная кислота), ароматизаторы, консервант (бензоат натрия).'
-                },
-                {
-                    id: 7, name: 'Смузи Ягодный Микс', price: 180.00, rating: 9.5, color: '#8e44ad',
-                    img: 'https://placehold.co/150x100/8e44ad/FFF?text=Смузи',
-                    description: 'Натуральный смузи без добавления сахара. Только фрукты и ягоды.',
-                    kbzhu: { kkal: 55, proteins: 0.8, fats: 0.2, carbs: 13.5 },
-                    composition: 'Пюре банана, сок яблочный, пюре клубники, сок малины, сок черной смородины.'
-                },
-                {
-                    id: 8, name: 'Минеральная Вода', price: 45.00, rating: 8.0, color: '#2980b9',
-                    img: 'https://placehold.co/150x100/2980b9/FFF?text=Вода',
-                    description: 'Природная питьевая минеральная вода, газированная.',
-                    kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 },
-                    composition: 'Вода минеральная природная столовая.'
-                },
-                {
-                    id: 9, name: 'Миндаль Жареный', price: 320.00, rating: 9.8, color: '#27ae60',
-                    img: 'https://placehold.co/150x100/d35400/FFF?text=Орехи',
-                    description: 'Отборный жареный миндаль. Отличный источник полезных жиров и белка.',
-                    kbzhu: { kkal: 645, proteins: 18.6, fats: 57.7, carbs: 16.2 },
-                    composition: 'Ядра миндаля обжаренные.'
-                },
-                {
-                    id: 10, name: 'Холодный Кофе', price: 140.00, rating: 7.5, color: '#f39c12',
-                    img: 'https://placehold.co/150x100/2c3e50/FFF?text=Кофе',
-                    description: 'Кофейный напиток на молочной основе. Бодрит и освежает.',
-                    kbzhu: { kkal: 75, proteins: 2.9, fats: 1.5, carbs: 12.0 },
-                    composition: 'Молоко нормализованное, вода, сахар, экстракт кофе, карамель.'
-                },
-                {
-                    id: 11, name: 'Молочный Шоколад', price: 95.00, rating: 3.5, color: '#c0392b',
-                    img: 'https://placehold.co/150x100/c0392b/FFF?text=Шоколад',
-                    description: 'Классический молочный шоколад. Высокое содержание сахара.',
-                    kbzhu: { kkal: 550, proteins: 7.0, fats: 34.0, carbs: 53.0 },
-                    composition: 'Сахар, масло какао, тертое какао, сухое цельное молоко, сухая молочная сыворотка, эмульгаторы (лецитин соевый, Е476), ароматизатор.'
-                },
-                {
-                    id: 12, name: 'Салат Цезарь BIO', price: 280.00, rating: 9.9, color: '#27ae60',
-                    img: 'https://placehold.co/150x100/27ae60/FFF?text=Салат',
-                    description: 'Свежий салат с куриной грудкой су-вид и легким йогуртовым соусом.',
-                    kbzhu: { kkal: 160, proteins: 12.0, fats: 8.0, carbs: 5.0 },
-                    composition: 'Салат айсберг, филе куриной грудки, томаты черри, сыр пармезан, сухарики пшеничные, соус (йогурт натуральный, горчица, специи).'
-                }
-            ];
+        // 1. РАСШИРЕННАЯ БАЗА ДАННЫХ
+        const PRODUCTS_DATA = [
+            { id: 1, name: 'Йогурт Чудо Вишня', price: 89.90, rating: 8.7, color: '#27ae60', img: 'https://placehold.co/150x100/27ae60/FFF?text=Йогурт', description: 'Натуральный йогурт с кусочками вишни. Отличный перекус.', kbzhu: { kkal: 110, proteins: 3.2, fats: 2.5, carbs: 15.0 }, composition: 'Молоко нормализованное, фруктовый наполнитель (вишня, сахар, вода, Е1442), сахар, закваска.', tags: ['sugar', 'dairy'] },
+            { id: 2, name: 'Хлебцы Fit Start', price: 125.00, rating: 4.2, color: '#f39c12', img: 'https://placehold.co/150x100/f39c12/FFF?text=Хлебцы', description: 'Гречневые хлебцы без глютена. Богаты клетчаткой.', kbzhu: { kkal: 320, proteins: 10.0, fats: 2.0, carbs: 65.0 }, composition: 'Крупа гречневая ядрица, рис бурый, соль морская.', tags: ['vegan', 'gluten-free'] },
+            { id: 3, name: 'Круассан Обычный', price: 45.50, rating: 2.1, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Выпечка', description: 'Классический круассан на маргарине. Содержит много трансжиров.', kbzhu: { kkal: 450, proteins: 6.0, fats: 28.0, carbs: 48.0 }, composition: 'Мука пшеничная в/с, маргарин (растительные масла), вода, сахар, дрожжи, соль.', tags: ['sugar'] },
+            { id: 4, name: 'Фарш Говяжий', price: 350.00, rating: 9.1, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Мясо', description: 'Охлажденный говяжий фарш категории А.', kbzhu: { kkal: 290, proteins: 17.0, fats: 25.0, carbs: 0.0 }, composition: 'Говядина 100%.', tags: ['keto'] },
+            { id: 5, name: 'Чай Зеленый', price: 220.00, rating: 7.8, color: '#27ae60', img: 'https://placehold.co/150x100/555/FFF?text=Чай', description: 'Листовой зеленый чай.', kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 }, composition: 'Чай зеленый байховый крупнолистовой.', tags: ['vegan', 'sugar-free'] },
+            { id: 6, name: 'Газировка "Сладость"', price: 70.00, rating: 5.5, color: '#f39c12', img: 'https://placehold.co/150x100/555/FFF?text=Напиток', description: 'Сильногазированный сладкий напиток.', kbzhu: { kkal: 45, proteins: 0, fats: 0, carbs: 11.0 }, composition: 'Вода, сахар, лимонная кислота, бензоат натрия.', tags: ['sugar'] },
+            { id: 7, name: 'Смузи Ягодный Микс', price: 180.00, rating: 9.5, color: '#8e44ad', img: 'https://placehold.co/150x100/8e44ad/FFF?text=Смузи', description: 'Натуральный смузи без добавления сахара.', kbzhu: { kkal: 55, proteins: 0.8, fats: 0.2, carbs: 13.5 }, composition: 'Пюре банана, сок яблочный, пюре клубники.', tags: ['vegan', 'sugar-free'] },
+            { id: 8, name: 'Минеральная Вода', price: 45.00, rating: 8.0, color: '#2980b9', img: 'https://placehold.co/150x100/2980b9/FFF?text=Вода', description: 'Природная питьевая минеральная вода.', kbzhu: { kkal: 0, proteins: 0, fats: 0, carbs: 0 }, composition: 'Вода минеральная природная столовая.', tags: ['vegan', 'sugar-free', 'gluten-free'] },
+            { id: 9, name: 'Миндаль Жареный', price: 320.00, rating: 9.8, color: '#27ae60', img: 'https://placehold.co/150x100/d35400/FFF?text=Орехи', description: 'Отборный жареный миндаль. Отличный источник полезных жиров.', kbzhu: { kkal: 645, proteins: 18.6, fats: 57.7, carbs: 16.2 }, composition: 'Ядра миндаля обжаренные.', tags: ['vegan', 'gluten-free', 'keto'] },
+            { id: 10, name: 'Холодный Кофе', price: 140.00, rating: 7.5, color: '#f39c12', img: 'https://placehold.co/150x100/2c3e50/FFF?text=Кофе', description: 'Кофейный напиток на молочной основе.', kbzhu: { kkal: 75, proteins: 2.9, fats: 1.5, carbs: 12.0 }, composition: 'Молоко, вода, сахар, экстракт кофе, карамель.', tags: ['dairy', 'sugar'] },
+            { id: 11, name: 'Молочный Шоколад', price: 95.00, rating: 3.5, color: '#c0392b', img: 'https://placehold.co/150x100/c0392b/FFF?text=Шоколад', description: 'Классический молочный шоколад. Высокое содержание сахара.', kbzhu: { kkal: 550, proteins: 7.0, fats: 34.0, carbs: 53.0 }, composition: 'Сахар, масло какао, сухое цельное молоко.', tags: ['dairy', 'sugar'] },
+            { id: 12, name: 'Салат Цезарь BIO', price: 280.00, rating: 9.9, color: '#27ae60', img: 'https://placehold.co/150x100/27ae60/FFF?text=Салат', description: 'Свежий салат с куриной грудкой су-вид.', kbzhu: { kkal: 160, proteins: 12.0, fats: 8.0, carbs: 5.0 }, composition: 'Салат айсберг, куриная грудка, томаты, сыр, соус.', tags: ['keto'] }
+        ];
 
-            // 2. Функция-"шаблонизатор" (ГЛАВНАЯ МАГИЯ)
-            function renderCatalog() {
-                const grid = document.getElementById('catalog-grid');
-                
-                // Мы генерируем HTML для каждого товара по ОДНОМУ шаблону
-                grid.innerHTML = PRODUCTS_DATA.map(product => `
-                    <div class="product-card" onclick="ProductDetailsScreen.show(${product.id})">
-                        <div class="img-container">
-                            <img src="${product.img}" alt="${product.name}" />
-                            <div class="product-rating" style="background-color:${product.color};">${product.rating}</div>
-                            
-                            <button class="btn-outset" style="width: 100%; margin-top: 10px;">${product.name}</button>
-                            <p class="product-price" style="margin-top: 5px;">${product.price.toFixed(2)} руб.</p>
-                        </div>
+        // 2. Функция-"шаблонизатор" (ГЛАВНАЯ МАГИЯ)
+        function renderCatalog() {
+            const grid = document.getElementById('catalog-grid');
+            grid.innerHTML = PRODUCTS_DATA.map(product => `
+                <div class="product-card" onclick="ProductDetailsScreen.show(${product.id})">
+                    <div class="img-container">
+                        <img src="${product.img}" alt="${product.name}" />
+                        <div class="product-rating" style="background-color:${product.color};">${product.rating}</div>
+                        
+                        <button class="btn-outset" style="width: 100%; margin-top: 10px;">${product.name}</button>
+                        <p class="product-price" style="margin-top: 5px;">${product.price.toFixed(2)} руб.</p>
                     </div>
-                `).join('');
-            }
+                </div>
+            `).join('');
+        }
 
         const CONFIG = {
             ANIMATIONS: { TYPING_DURATION: 1500, TOAST_DURATION: 2000 },
@@ -612,7 +537,7 @@
         };
         let AppState = { currentScreen: CONFIG.SCREENS.CATALOG, selectedFilters: [], selectedSort: null };
 
-        // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+        // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (КИРПИЧИ) ===
         const Brick = {
             addClass: (el, className) => el?.classList.add(className),
             removeClass: (el, className) => el?.classList.remove(className),
@@ -714,21 +639,81 @@
         // Регистрация нативной кнопки
         tg.BackButton.onClick(Nav.back);
 
-        // === МОДУЛИ (ОСТАВЛЕНЫ БЕЗ ИЗМЕНЕНИЙ В ЛОГИКЕ) ===
+        // === ФУНКЦИИ ГЕНЕРАЦИИ КОНТЕНТА ДЛЯ МОДАЛОК ===
+        function getSortContent() {
+            // Радио-кнопки (можно выбрать только один)
+            const options = [
+                { id: 'sort-rating', label: 'По рейтингу' },
+                { id: 'sort-cheap', label: 'По цене (сначала дешевые)' },
+                { id: 'sort-expensive', label: 'По цене (сначала дорогие)' },
+                { id: 'sort-stock', label: 'По наличию акций' }
+            ];
+            return options.map((opt, index) => `
+                <div class="list-item card-inset" onclick="document.getElementById('${opt.id}').checked = true; Brick.haptic('light');" style="margin-top: 10px;">
+                    <span class="item-name">${opt.label}</span>
+                    <input type="radio" name="sort-group" id="${opt.id}" style="accent-color: var(--accent-color);" ${index === 0 ? 'checked' : ''}>
+                </div>
+            `).join('');
+        }
+
+        function getFilterContent() {
+            // Чекбоксы (можно выбрать несколько)
+            const filters = [
+                { id: 'filter-vegan', label: 'Веганские продукты' },
+                { id: 'filter-sugar', label: 'Без сахара' },
+                { id: 'filter-gluten', label: 'Без глютена' },
+                { id: 'filter-keto', label: 'Кето-совместимые' }
+            ];
+            return filters.map((filter, index) => `
+                <div class="list-item card-inset" onclick="document.getElementById('${filter.id}').checked = !document.getElementById('${filter.id}').checked; Brick.haptic('light');" style="margin-top: 10px;">
+                    <span class="item-name">${filter.label}</span>
+                    <input type="checkbox" name="filter-group" id="${filter.id}" style="accent-color: var(--accent-color);">
+                </div>
+            `).join('');
+        }
+        
+        // === МОДУЛИ (ОРКЕСТРАТОРЫ) ===
         const ModalOrchestrator = {
-            show: (title, bodyContent, hideDefaultButton = false) => {
+            // Универсальный метод show
+            show: (arg1, arg2, arg3) => {
                 Brick.haptic('medium');
+                
+                let title, bodyContent, hideDefaultButton = false;
+
+                // СЦЕНАРИЙ 1: Старые модалки (Сортировка/Фильтрация)
+                if (typeof arg1 === 'string' && !arg2) {
+                    const type = arg1;
+                    title = type === 'sort' ? 'Сортировать' : 'Фильтровать';
+                    bodyContent = type === 'sort' ? getSortContent() : getFilterContent();
+                    hideDefaultButton = false; // Кнопка "Применить" нужна
+                } else {
+                    // СЦЕНАРИЙ 2: Новые модалки (Добавление в список)
+                    [title, bodyContent, hideDefaultButton] = [arg1, arg2, arg3];
+                }
+                
+                // Рендеринг
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-body').innerHTML = bodyContent;
-                // Скрываем/показываем стандартную кнопку "Применить"
-                document.querySelector('#modal-overlay > .modal-content > .btn-outset').style.display = hideDefaultButton ? 'none' : 'block';
+
+                // Управление стандартной кнопкой
+                const applyBtn = document.querySelector('#modal-overlay .modal-content .btn-outset[onclick="ModalOrchestrator.apply()"]');
+                if (applyBtn) {
+                    applyBtn.style.display = hideDefaultButton ? 'none' : 'block';
+                }
+                
                 Brick.addClass(document.getElementById('modal-overlay'), 'active');
             },
+
             hide: () => Brick.removeClass(document.getElementById('modal-overlay'), 'active'),
-            // Для старых вызовов (сортировка/фильтры) можно оставить заглушки или перевести их на новый метод
-            apply: () => { ModalOrchestrator.hide(); Brick.showToast('Применено!'); }
+            // Метод для стандартной кнопки "Применить"
+            apply: () => { ModalOrchestrator.hide(); Brick.showToast('Параметры применены!'); }
         };
-        const CatalogModule = { init: () => { document.getElementById('view-toggle').addEventListener('click', () => { document.getElementById('catalog-grid').classList.toggle('view-list'); Brick.haptic('light'); }); }, filterByCategory: (cat) => { Brick.showToast('Фильтр: ' + cat); Nav.to(CONFIG.SCREENS.CATALOG); } };
+
+        const CatalogModule = { 
+            init: () => { document.getElementById('view-toggle').addEventListener('click', () => { document.getElementById('catalog-grid').classList.toggle('view-list'); Brick.haptic('light'); }); }, 
+            filterByCategory: (cat) => { Brick.showToast('Фильтр: ' + cat); Nav.to(CONFIG.SCREENS.CATALOG); } 
+        };
+        
         const ChatModule = { 
             init: () => { document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key==='Enter') ChatModule.sendMessage(); }); }, 
             sendMessage: () => { 
@@ -741,18 +726,16 @@
                 sc.scrollTop=sc.scrollHeight; 
                 setTimeout(()=>{c.innerHTML+=`<div class="chat-message ai-message"><div class="chat-bubble card-inset">Ответ ИИ...</div></div>`; sc.scrollTop=sc.scrollHeight;}, 1000); 
             },
-            // ГЛАВНОЕ ИЗМЕНЕНИЕ: функция отправки сообщения от ИИ теперь мощнее
+            
             sendAIMessage: (text, actions = []) => {
                 const chat = document.getElementById('chat-messages');
                 
-                // 1. Генерируем HTML для кнопок (если они есть)
                 let actionsHTML = '';
                 if (actions.length > 0) {
                     actionsHTML = '<div class="chat-actions-container" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">';
                     actions.forEach(action => {
-                        // action = { label: 'Добавить Сосиски', productName: 'Сосиски' }
                         actionsHTML += `
-                            <button class="chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено';">
+                            <button class="chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено'; this.disabled=true;">
                                 ${action.label}
                             </button>
                         `;
@@ -760,7 +743,6 @@
                     actionsHTML += '</div>';
                 }
 
-                // 2. Добавляем сообщение с анимацией (упрощенно для примера без задержки typing)
                 chat.innerHTML += `
                     <div class="chat-message ai-message">
                         <div class="chat-bubble card-inset">
@@ -770,40 +752,28 @@
                     </div>`;
                 ChatModule.scrollToBottom();
             },
+            
             askAI: (productId) => {
-                // Находим товар по ID
                 const product = PRODUCTS_DATA.find(p => p.id === productId);
                 if (!product) return;
                 
-                // Формируем промпт для ИИ с проверкой наличия данных
                 let prompt = `Расскажи мне о продукте "${product.name}". `;
                 if (product.composition) prompt += `Его состав: ${product.composition}. `;
-                if (product.kbzhu) prompt += `Пищевая ценность: ${product.kbzhu.kkal} ккал, ${product.kbzhu.proteins}г белка, ${product.kbzhu.fats}г жиров, ${product.kbzhu.carbs}г углеводов. `;
-                prompt += `Опиши его пользу, возможные противопоказания и дай рекомендации по употреблению.`;
+                if (product.kbzhu) prompt += `КБЖУ: ${product.kbzhu.kkal} ккал, ${product.kbzhu.proteins}г белка, ${product.kbzhu.fats}г жиров, ${product.kbzhu.carbs}г углеводов. `;
+                prompt += `Дай рекомендации по употреблению.`;
                 
-                // Переходим в чат
                 Nav.to(CONFIG.SCREENS.CHAT);
-                
-                // Показываем сообщение пользователя (промпт)
                 const chatContainer = document.getElementById('chat-messages');
-                chatContainer.innerHTML += `
-                    <div class="chat-message user-message">
-                        <div class="chat-bubble btn-outset">${prompt}</div>
-                    </div>
-                `;
+                chatContainer.innerHTML += `<div class="chat-message user-message"><div class="chat-bubble btn-outset">${prompt}</div></div>`;
                 
-                // Скроллим вниз
                 const scrollContainer = DOM.getScrollContainer();
                 scrollContainer.scrollTop = scrollContainer.scrollHeight;
                 
-                // Имитируем ответ ИИ (в реальности здесь был бы запрос к API)
                     setTimeout(() => {
-                        // Пример использования sendAIMessage с кнопками действий
                         ChatModule.sendAIMessage(
-                            `Анализирую состав продукта "${product.name}"...<br><br>
-                            💪 <b>Польза:</b> ${product.description}<br><br>
-                            📋 <b>Рекомендации:</b> Отличный выбор для здорового питания! 
-                            Содержит полезные нутриенты и подходит для ежедневного употребления.`,
+                            `Анализ "${product.name}"...<br><br>
+                            💪 <b>Польза:</b> ${product.description || 'Изучается...'} <br><br>
+                            📋 <b>Рекомендации:</b> Отличный выбор.`,
                             [
                                 { label: `+ ${product.name}`, productName: product.name }
                             ]
@@ -812,14 +782,14 @@
             },
             scrollToBottom: () => { const sc = DOM.getScrollContainer(); sc.scrollTop = sc.scrollHeight; }
         };
+        
         const ProfileModule = { init: () => { document.getElementById('theme-toggle-profile').addEventListener('click', ProfileModule.toggleTheme); ProfileModule.updateThemeDisplay(); }, toggleTheme: () => { const h=DOM.getRoot(); const n=h.getAttribute('data-theme')==='light'?'dark':'light'; h.setAttribute('data-theme',n); tg.setHeaderColor(n==='light'?'#D1D9E6':'#25282E'); ProfileModule.updateThemeDisplay(); Brick.showToast('Тема: '+n); }, updateThemeDisplay: () => { const t = DOM.getRoot().getAttribute('data-theme'); document.getElementById('theme-label').textContent = 'Текущая: ' + (t==='light'?'Светлая':'Темная'); }, selectStore: (b) => { document.querySelectorAll('#store-screen .setting-button').forEach(bn=>Brick.removeClass(bn,'selected')); Brick.addClass(b,'selected'); Brick.showToast('Магазин выбран'); }, toggleAllergy: (el) => { Brick.haptic('light'); Brick.toggleClass(el.querySelector('.checkbox-switch'), 'done'); } };
+        
         const ProductDetailsScreen = { 
             show: (productId) => {
-                // Находим товар по ID
                 const product = PRODUCTS_DATA.find(p => p.id === productId);
                 if (!product) return;
                 
-                // Генерируем HTML из шаблона с реальными данными
                 document.getElementById('details-screen').innerHTML = `
                     <div class="details-card card-inset">
                         <div class="details-header">
@@ -865,8 +835,8 @@
                 Nav.to(CONFIG.SCREENS.DETAILS);
             }
         };
+        
         const ShoppingListModule = { 
-            // Базовое добавление (как было)
             addItem: (name) => {
                 const listContainer = document.querySelector('#list-screen .list-group:first-child .list-container');
                 const newItemHTML = `
@@ -877,19 +847,17 @@
                 listContainer.insertAdjacentHTML('afterbegin', newItemHTML);
                 Brick.haptic('success');
             },
-            // НОВАЯ ФУНКЦИЯ: Добавление с модалкой (то, что вы просили)
             addItemWithModal: (name) => {
-                ShoppingListModule.addItem(name); // Сначала реально добавляем
+                ShoppingListModule.addItem(name); 
                 
-                // Показываем модалку
                 ModalOrchestrator.show(
                     '✅ Добавлено!',
                     `<p style="text-align: center; opacity: 0.7; margin-bottom: 20px;">Товар <b>"${name}"</b> теперь в вашем списке покупок.</p>
-                     <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
                         <button class="btn-outset btn-green" onclick="ModalOrchestrator.hide(); Nav.to(CONFIG.SCREENS.LIST);">Перейти к списку</button>
                         <button class="btn-outset" onclick="ModalOrchestrator.hide()">Остаться здесь</button>
-                     </div>`,
-                    true // Скрыть стандартную кнопку "Применить"
+                    </div>`,
+                    true
                 );
             },
             toggleItem: (el) => { Brick.haptic('light'); Brick.toggleClass(el, 'done'); }, 
@@ -901,8 +869,8 @@
                 CatalogModule.init(); ChatModule.init(); ProfileModule.init();
                 DOM.getTabButtons().forEach(btn => btn.addEventListener('click', (e) => Nav.to(e.currentTarget.dataset.target)));
                 document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) ModalOrchestrator.hide(); });
-                Nav.to(CONFIG.SCREENS.CATALOG); // Старт с каталога
-                renderCatalog(); // <--- Добавить вызов
+                renderCatalog();
+                Nav.to(CONFIG.SCREENS.CATALOG); 
             });
     </script>
 </body>
