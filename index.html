@@ -3,72 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Test Sum Safe Areas</title>
+    <title>Visual Lines Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: sans-serif;
-            background-color: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
+            background-color: #1c1c1d; /* Темный фон, чтобы лучше видеть линии */
+            color: #fff;
         }
 
-        .safe-area-container {
-            /* ТВОЯ ГИПОТЕЗА: Складываем обе зоны вместе */
-            padding-top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
-            
-            /* Бока: Системная защита + 15px */
-            padding-left: calc(var(--tg-safe-area-inset-left) + 15px);
-            padding-right: calc(var(--tg-safe-area-inset-right) + 15px);
-            
-            /* Низ: Складываем, вдруг там тоже надо? (для теста) */
-             padding-bottom: calc(var(--tg-safe-area-inset-bottom) + var(--tg-content-safe-area-inset-bottom) + 15px);
-
-            box-sizing: border-box;
-            min-height: 100vh;
-            border: 2px solid blue; /* Синяя рамка для наглядности */
+        /* ЛИНИЯ 1: Граница системной зоны (часы) */
+        .line-zone-1 {
+            position: absolute;
+            top: var(--tg-safe-area-inset-top);
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: red;
+            z-index: 1000;
+        }
+        .label-1 {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            color: red;
+            font-size: 10px;
         }
 
-        .debug-info {
-            margin-top: 20px;
-            padding: 10px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
+        /* ЛИНИЯ 2: Граница кнопки закрыть (СУММА ДВУХ ЗОН) */
+        .line-zone-2 {
+            position: absolute;
+            /* ВОТ ОНА, КЛЮЧЕВАЯ ФОРМУЛА: */
+            top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #0f0; /* Ярко-зеленый */
+            z-index: 1000;
+        }
+        .label-2 {
+            position: absolute;
+            top: 2px;
+            right: 5px;
+            color: #0f0;
+            font-size: 10px;
+        }
+
+        /* Контент, который должен быть безопасным */
+        .content {
+            /* Отступаем ровно по зеленую линию */
+            margin-top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="safe-area-container">
-        <h1>Заголовок (Сумма зон)</h1>
-        <p>Этот текст использует сумму safe-area + content-safe-area.</p>
-        
-        <div class="debug-info" id="debug">Loading...</div>
+
+    <div class="line-zone-1">
+        <span class="label-1">Zone 1 (Safe Area) END</span>
+    </div>
+
+    <div class="line-zone-2">
+        <span class="label-2">Zone 2 (Content Safe) END</span>
+    </div>
+
+    <div class="content">
+        <h1>Тест визуальных границ</h1>
+        <p>🔴 Красная линия должна быть под часами.</p>
+        <p>🟢 Зеленая линия должна быть под кнопкой "Закрыть".</p>
+        <p>Весь этот текст начинается строго от зеленой линии.</p>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         if (tg.requestFullscreen) tg.requestFullscreen();
-
-        function updateDebugInfo() {
-            const safe = tg.safeAreaInset || {top: 0};
-            const content = tg.contentSafeAreaInset || {top: 0};
-            const sum = (safe.top || 0) + (content.top || 0);
-
-            document.getElementById('debug').innerHTML = `
-                Safe Top: ${safe.top}px<br>
-                Content Top: ${content.top}px<br>
-                <b>SUM RESULT: ${sum}px</b>
-            `;
-        }
-
-        tg.onEvent('safeAreaChanged', updateDebugInfo);
-        tg.onEvent('contentSafeAreaChanged', updateDebugInfo);
-        tg.onEvent('fullscreenChanged', updateDebugInfo);
-        updateDebugInfo();
     </script>
 </body>
 </html>
