@@ -131,6 +131,9 @@
             z-index: 200;
             max-width: 420px;
             margin: 0 auto;
+            will-change: transform;
+            transition: transform 300ms ease;
+            transform: translateY(0);
         }
 
         @media (min-width: 768px) {
@@ -161,6 +164,27 @@
             font-size: 18px;
             font-weight: 600;
             color: var(--text-color);
+        }
+
+        .header--unpinned { 
+            transform: translateY(-100%); 
+        } 
+
+        .header--pinned { 
+            transform: translateY(0); 
+        } 
+
+        /* ДОБАВЬ ДЛЯ ПОИСКА И ФИЛЬТРОВ */ 
+        .catalog-search-bar, .filter-buttons { 
+            will-change: transform; 
+            transition: transform 300ms ease; 
+            transform: translateY(0); 
+        } 
+
+        .catalog-search-bar.hidden, .filter-buttons.hidden { 
+            transform: translateY(-100%); 
+            opacity: 0; 
+            pointer-events: none; 
         }
 
         /* ================================================================== */
@@ -1127,6 +1151,17 @@
                 };
                 DOM.getTitle().textContent = titles[screenId] || '';
 
+                // 🔥 ДОБАВЛЕНО: Сброс состояния элементов при переключении экранов
+                if (screenId !== CONFIG.SCREENS.CATALOG) {
+                    const header = document.querySelector('.header');
+                    const searchBar = document.querySelector('.catalog-search-bar');
+                    const filterButtons = document.querySelector('.filter-buttons');
+                    
+                    header.classList.remove('header--unpinned', 'header--pinned');
+                    searchBar.classList.remove('hidden');
+                    filterButtons.classList.remove('hidden');
+                }
+
 
             },
 
@@ -1458,6 +1493,40 @@
 
             // Начальная навигация
             ScreenNavigation.navigateTo(CONFIG.SCREENS.CATALOG);
+        });
+
+        /* ================================================================== */
+        /* 6. ОТСЛЕЖИВАНИЕ СКРОЛЛА ДЛЯ КАТАЛОГА                             */
+        /* ================================================================== */
+
+        let lastScrollTop = 0;
+        let isScrollingDown = false;
+
+        DOM.getContent().addEventListener('scroll', () => {
+            const currentScreen = ScreenNavigation.getCurrentScreen();
+            if (currentScreen !== CONFIG.SCREENS.CATALOG) return;
+
+            const scrollTop = DOM.getContent().scrollTop;
+            isScrollingDown = scrollTop > lastScrollTop;
+            lastScrollTop = scrollTop;
+
+            const header = document.querySelector('.header');
+            const searchBar = document.querySelector('.catalog-search-bar');
+            const filterButtons = document.querySelector('.filter-buttons');
+
+            if (isScrollingDown && scrollTop > 100) {
+                // Прячем элементы при скролле вниз
+                header.classList.add('header--unpinned');
+                header.classList.remove('header--pinned');
+                searchBar.classList.add('hidden');
+                filterButtons.classList.add('hidden');
+            } else {
+                // Показываем элементы при скролле вверх или в начале страницы
+                header.classList.remove('header--unpinned');
+                header.classList.add('header--pinned');
+                searchBar.classList.remove('hidden');
+                filterButtons.classList.remove('hidden');
+            }
         });
     </script>
 </body>
