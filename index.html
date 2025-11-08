@@ -3,84 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Color Zones Test</title>
+    <title>All Paddings Visualized</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
+        /* Сброс стандартных отступов браузера */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            margin: 0; padding: 0;
             font-family: sans-serif;
-            background-color: #1c1c1d; color: #fff;
+            background-color: #000; color: #fff;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
         }
 
-        /* 🔴 Зона 1: Часы */
-        .zone-1-system {
-            height: var(--tg-safe-area-inset-top);
-            background-color: rgba(255, 0, 0, 0.5); /* Полупрозрачный красный */
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 10px;
-        }
+        /* Зоны безопасности (оставляем как ориентиры) */
+        .zone-1 { height: var(--tg-safe-area-inset-top); background: rgba(255,0,0,0.3); border-bottom: 1px solid red; flex-shrink: 0; }
+        .zone-2 { height: var(--tg-content-safe-area-inset-top); background: rgba(0,255,0,0.3); border-bottom: 1px solid lime; flex-shrink: 0; }
 
-        /* 🟢 Зона 2: Telegram */
-        .zone-2-telegram {
-            height: var(--tg-content-safe-area-inset-top);
-            background-color: rgba(0, 255, 0, 0.5); /* Полупрозрачный зеленый */
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 10px; color: #000;
-        }
-
-        /* 🔵 Основной контент с боковыми зонами */
+        /* === ГЛАВНЫЙ КОНТЕЙНЕР === */
         .main-content {
             flex-grow: 1;
-            background-color: #333;
-            
-            /* Боковые и нижние отступы мы покрасим отдельно */
+            background-color: #222; /* Темно-серый фон всего контента */
+
+            /* Визуализация БОКОВЫХ и НИЖНИХ безопасных отступов */
             padding-left: calc(var(--tg-safe-area-inset-left) + 15px);
             padding-right: calc(var(--tg-safe-area-inset-right) + 15px);
             padding-bottom: calc(var(--tg-content-safe-area-inset-bottom) + 15px);
 
-            /* Визуализация этих отступов через border */
-            border-left: 15px solid rgba(0, 0, 255, 0.3);
-            border-right: 15px solid rgba(0, 0, 255, 0.3);
-            border-bottom: 15px solid rgba(0, 0, 255, 0.3);
-            background-clip: padding-box; /* Чтобы фон не залезал под бордеры */
+            /* Красим область padding в синий, чтобы ты её видел */
+            background-image: linear-gradient(rgba(0,0,255,0.2), rgba(0,0,255,0.2)); 
+            background-clip: padding-box; /* Фон контента не лезет на padding */
+            /* А сам padding красим отдельно через box-shadow (хитрый трюк) */
+            box-shadow: inset 0 0 0 1000px rgba(0,0,0,0); /* Прозрачная тень для сброса */
+        }
+        /* Хитрый способ покрасить padding отдельно от контента:
+           используем псевдоэлемент, который лежит ПОД контентом, но НАД фоном */
+        .main-content::before {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1; pointer-events: none;
+            /* Этот блок показывает границы экрана, чтобы ты понимал scale */
         }
 
-        h1 { 
-            margin-top: 0; 
-            background-color: rgba(255, 255, 255, 0.1); /* Подсветка заголовка */
+
+        /* === ВИЗУАЛИЗАЦИЯ ОТСТУПОВ У ЭЛЕМЕНТОВ === */
+        
+        /* Общий класс для показа padding внутри элемента */
+        .debug-padding {
+            background-color: rgba(255, 0, 0, 0.2); /* Красный фон самого блока */
+        }
+        .debug-padding > * {
+            background-color: rgba(0, 255, 0, 0.2); /* Зеленый фон контента внутри */
         }
 
-        /* 🟡 Тестовая кнопка */
-        .test-button {
-            /* Внутренние отступы: 12px сверху/снизу, 50px слева/справа */
-            padding: 12px 50px; 
-            background-color: yellow;
-            color: black;
-            border: none; border-radius: 10px;
-            font-size: 16px; cursor: pointer;
-            /* width: 100%;  <-- Убрал 100% ширину, чтобы ты увидел боковые отступы кнопки */
-            margin-top: 20px;
-            
-            /* Чтобы видеть границы самой кнопки */
-            border: 2px solid orange;
+        /* Заголовок */
+        h1 {
+            /* Добавим ему padding, чтобы ты увидел */
+            padding: 20px;
+            margin-bottom: 20px; /* Внешний отступ снизу */
+            border: 2px solid yellow; /* Граница элемента */
+            background-color: rgba(255, 255, 0, 0.1); /* Желтоватый фон */
         }
+
+        /* Текстовый абзац */
+        p {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid cyan;
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
+        /* Кнопка */
+        button {
+            margin-top: 30px; /* Отступ сверху от текста */
+            padding: 15px 40px; /* Внутренние отступы кнопки */
+            border: 3px solid magenta; /* Граница кнопки */
+            background-color: rgba(255, 0, 255, 0.2); /* Фон кнопки */
+            color: white;
+            font-size: 18px;
+            display: block; /* Чтобы margin работал корректно */
+        }
+        /* Внутри кнопки текст тоже можно обернуть, чтобы видеть его границы */
+        button span {
+            background-color: rgba(0,0,0,0.5); /* Темный фон чисто под буквами */
+        }
+
     </style>
 </head>
 <body>
-
-    <div class="zone-1-system">ZONE 1 (SYSTEM)</div>
-    <div class="zone-2-telegram">ZONE 2 (TELEGRAM)</div>
+    <div class="zone-1">SYSTEM ZONE</div>
+    <div class="zone-2">TELEGRAM ZONE</div>
 
     <div class="main-content">
-        <h1>Заголовок контента</h1>
-        <p>🔵 Синие полосы по бокам и снизу — это безопасные отступы (15px).</p>
-        
-        <button class="test-button">Кнопка с padding 50px по бокам</button>
-        
-        <p>Посмотри на желтую кнопку. Текст внутри неё не прилипает к краям оранжевой рамки, потому что там есть <code>padding: 12px 50px</code>.</p>
+        <h1>
+            <span style="background: rgba(0,0,0,0.5)">Заголовок с padding: 20px</span>
+        </h1>
+
+        <p>
+            <span style="background: rgba(0,0,0,0.5)">
+                Абзац текста. Голубая рамка — это границы блока `<p>`. 
+                Внутри неё есть отступ 10px до этого текста.
+            </span>
+        </p>
+
+        <button>
+            <span>Кнопка (padding: 15px 40px)</span>
+        </button>
+
+        <p style="margin-top: 20px">
+            Синяя область по краям экрана — это padding контейнера `.main-content` (15px + safe-area).
+        </p>
     </div>
 
     <script>
