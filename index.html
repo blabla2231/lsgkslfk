@@ -186,7 +186,7 @@
         .product-card .img-container { border-radius: 15px; padding: 10px; margin-bottom: 10px; background: var(--bg-primary); border: 1px solid var(--border-subtle); box-shadow: inset 0 6px 10px 0 var(--indent-shadow-top), inset 0 -4px 8px 0 var(--indent-highlight-bottom); position: relative; }
         .product-card img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; }
         .product-rating { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; border-radius: 50%; background-color: #27ae60; color: white; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10; }
-        .product-card .btn-outset { width: 100%; padding: 8px 5px; border-radius: 10px; font-weight: 600; font-size: 13px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .product-card .btn-outset { width: 100%; padding: 8px 5px; border-radius: 10px; font-weight: 600; font-size: 13px; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .product-price { font-size: 12px; opacity: 0.7; margin-top: 5px; }
         .filter-buttons {
             display: flex;
@@ -271,6 +271,13 @@
         .modal-content h3 { margin-top: 0; }
         .modal-content .btn-outset { width: 100%; margin-top: 10px; padding: 12px; font-size: 16px; transition: background 0.3s ease; }
         .modal-content .btn-outset.selected { background: var(--accent-color); color: white; }
+        .modal-apply-btn {
+            margin-top: 20px;
+            background: var(--accent-color);
+            color: white;
+            /* По умолчанию кнопка "Применить" от фильтров должна быть видна */
+            display: block; 
+        }
 
         /* Уведомления */
         .toast { visibility: hidden; opacity: 0; position: fixed; left: 50%; bottom: 120px; transform: translate(-50%, 0); min-width: 200px; background: var(--element-bg); color: var(--text-color); text-align: center; border-radius: 20px; padding: 15px 20px; z-index: 999; box-shadow: 0 10px 20px rgba(0,0,0,0.3); font-size: 14px; font-weight: 600; transition: opacity 0.3s, visibility 0.3s, transform 0.3s ease-out; }
@@ -414,8 +421,8 @@
                     <button class="btn-outset" id="view-toggle" style="padding: 10px; border-radius: 50%; width: 45px; height: 45px;"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="var(--text-color)" d="M4 11h5V5H4v6zm0 7h5v-6H4v6zm6 0h5v-6h-5v6zm6 0h5v-6h-5v6zm-6-7h5V5h-5v6zm6-6v6h5V5h-5z"/></svg></button>
                 </div>
                 <div class="filter-buttons action-filters">
-                    <button class="btn-outset" id="sort-btn" onclick="ModalOrchestrator.show('sort')">Сортировать</button>
-                    <button class="btn-outset" id="filter-btn" onclick="ModalOrchestrator.show('filter')">Фильтрация</button>
+                    <button class="btn-outset" id="sort-btn" onclick="ModalOrchestrator.showFilter('sort')">Сортировать</button>
+                    <button class="btn-outset" id="filter-btn" onclick="ModalOrchestrator.showFilter('filter')">Фильтрация</button>
                 </div>
                 <div class="catalog-grid" id="catalog-grid"></div>
             </div>
@@ -489,7 +496,7 @@
         </div>
     </div>
 
-    <div id="modal-overlay" onclick="ModalOrchestrator.hide()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="modal-title">Загрузка...</h3><div id="modal-body"></div><button class="btn-outset" style="margin-top: 20px; background: var(--accent-color); color: white;" onclick="ModalOrchestrator.apply()">Применить</button></div></div>
+    <div id="modal-overlay" onclick="ModalOrchestrator.hide()"><div class="modal-content" onclick="event.stopPropagation()"><h3 id="modal-title">Загрузка...</h3><div id="modal-body"></div><button class="btn-outset modal-apply-btn" onclick="ModalOrchestrator.apply()">Применить</button></div></div>
     <div id="toast-notification" class="toast"></div>
 
     <script>
@@ -524,7 +531,7 @@
                         <img src="${product.img}" alt="${product.name}" />
                         <div class="product-rating" style="background-color:${product.color};">${product.rating}</div>
                         
-                        <button class="btn-outset" style="width: 100%; margin-top: 10px;">${product.name}</button>
+                        <button class="btn-outset">${product.name}</button>
                         <p class="product-price" style="margin-top: 5px;">${product.price.toFixed(2)} руб.</p>
                     </div>
                 </div>
@@ -673,41 +680,55 @@
         }
         
         // === МОДУЛИ (ОРКЕСТРАТОРЫ) ===
-        const ModalOrchestrator = {
-            // Универсальный метод show
-            show: (arg1, arg2, arg3) => {
-                Brick.haptic('medium');
-                
-                let title, bodyContent, hideDefaultButton = false;
-
-                // СЦЕНАРИЙ 1: Старые модалки (Сортировка/Фильтрация)
-                if (typeof arg1 === 'string' && !arg2) {
-                    const type = arg1;
-                    title = type === 'sort' ? 'Сортировать' : 'Фильтровать';
-                    bodyContent = type === 'sort' ? getSortContent() : getFilterContent();
-                    hideDefaultButton = false; // Кнопка "Применить" нужна
-                } else {
-                    // СЦЕНАРИЙ 2: Новые модалки (Добавление в список)
-                    [title, bodyContent, hideDefaultButton] = [arg1, arg2, arg3];
-                }
-                
-                // Рендеринг
-                document.getElementById('modal-title').textContent = title;
-                document.getElementById('modal-body').innerHTML = bodyContent;
-
-                // Управление стандартной кнопкой
-                const applyBtn = document.querySelector('#modal-overlay .modal-content .btn-outset[onclick="ModalOrchestrator.apply()"]');
-                if (applyBtn) {
-                    applyBtn.style.display = hideDefaultButton ? 'none' : 'block';
-                }
-                
-                Brick.addClass(document.getElementById('modal-overlay'), 'active');
+        
+        // КИРПИЧ: ModalView
+        
+        // === КИРПИЧ: УПРАВЛЕНИЕ VIEW МОДАЛКИ ===
+        const ModalView = {
+            elements: {
+                overlay: document.getElementById('modal-overlay'),
+                title: document.getElementById('modal-title'),
+                body: document.getElementById('modal-body'),
+                applyBtn: document.querySelector('.modal-apply-btn')
             },
-
-            hide: () => Brick.removeClass(document.getElementById('modal-overlay'), 'active'),
-            // Метод для стандартной кнопки "Применить"
-            apply: () => { ModalOrchestrator.hide(); Brick.showToast('Параметры применены!'); }
+            render: (title, body, showApplyBtn = false) => {
+                ModalView.elements.title.textContent = title;
+                ModalView.elements.body.innerHTML = body;
+                ModalView.elements.applyBtn.style.display = showApplyBtn ? 'block' : 'none';
+            },
+            show: () => {
+                Brick.addClass(ModalView.elements.overlay, 'active');
+            },
+            hide: () => {
+                Brick.removeClass(ModalView.elements.overlay, 'active');
+            }
         };
+
+        const ModalOrchestrator = {
+            showFilter(type) {
+                Brick.haptic('medium');
+                const title = type === 'sort' ? 'Сортировать' : 'Фильтровать';
+                const bodyContent = type === 'sort' ? getSortContent() : getFilterContent();
+
+                ModalView.render(title, bodyContent, true); // true = показать кнопку "Применить"
+                ModalView.show();
+            },
+            showNotification(title, bodyContent) {
+                Brick.haptic('medium');
+                ModalView.render(title, bodyContent, false); // false = скрыть кнопку "Применить"
+                ModalView.show();
+            },
+            hide: () => {
+                ModalView.hide();
+            },
+            apply: () => {
+                ModalView.hide();
+                Brick.showToast('Параметры применены!');
+            }
+        };
+
+        
+
 
         const CatalogModule = { 
             init: () => { document.getElementById('view-toggle').addEventListener('click', () => { document.getElementById('catalog-grid').classList.toggle('view-list'); Brick.haptic('light'); }); }, 
