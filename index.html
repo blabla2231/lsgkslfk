@@ -3,47 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Only Content Safe Area</title>
+    <title>Sequential Zones Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: sans-serif;
-            background-color: #1c1c1d;
-            color: #fff;
+            background-color: #1c1c1d; color: #fff;
         }
 
-        /* ЗЕЛЕНАЯ ЛИНИЯ: показывает, где заканчивается Content Safe Area */
-        .line-zone-2 {
-            position: absolute;
-            top: var(--tg-content-safe-area-inset-top); /* ТОЛЬКО ОДНА ПЕРЕМЕННАЯ */
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #0f0;
-            z-index: 1000;
+        /* Блок 1: Зона часов */
+        .zone-1-safe {
+            height: var(--tg-safe-area-inset-top);
+            background-color: rgba(255, 0, 0, 0.3); /* Полупрозрачный красный */
+            border-bottom: 2px solid red;
+            box-sizing: border-box;
         }
 
-        .content {
-            /* Отступ ровно на высоту Content Safe Area */
-            margin-top: var(--tg-content-safe-area-inset-top); /* ТОЛЬКО ОДНА ПЕРЕМЕННАЯ */
-            padding: 0 20px; /* Убрал верхний паддинг, чтобы текст прижался к линии */
+        /* Блок 2: Зона кнопки "Закрыть" (идет следом за первой) */
+        .zone-2-content {
+            height: var(--tg-content-safe-area-inset-top);
+            background-color: rgba(0, 255, 0, 0.3); /* Полупрозрачный зеленый */
+            border-bottom: 2px solid #0f0;
+            box-sizing: border-box;
         }
 
-        h1 {
-            margin-top: 0; /* Убираем отступ у самого заголовка */
-            background-color: rgba(255, 0, 0, 0.2); /* Подсветка для наглядности */
+        /* Основной контент */
+        .main-content {
+            padding: 20px;
+            background-color: #333;
         }
+
+        h1 { margin-top: 0; }
     </style>
 </head>
 <body>
 
-    <div class="line-zone-2"></div>
+    <div class="zone-1-safe"></div>
 
-    <div class="content">
+    <div class="zone-2-content"></div>
+
+    <div class="main-content">
         <h1>Главная страница</h1>
-        <p>Этот текст должен начинаться ровно от зеленой линии.</p>
+        <p>Этот текст должен быть под двумя цветными зонами.</p>
+        <p>🔴 Красная зона = часы.</p>
+        <p>🟢 Зеленая зона = кнопка "Закрыть".</p>
     </div>
 
     <script>
