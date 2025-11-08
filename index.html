@@ -34,7 +34,6 @@
 
             /* Переменные для управления компонентами */
             --current-bottom-bar-height: 100px;
-            --virtual-keyboard-height: 0px;
 
             /* Safe Area */
             --tg-safe-area-inset-top: 30px; 
@@ -90,7 +89,7 @@
         }
 
         .content {
-            padding: 15px 15px calc(var(--tg-safe-area-inset-bottom, 0px) + var(--current-bottom-bar-height) + var(--virtual-keyboard-height) + 20px) 15px;
+            padding: 15px 15px calc(var(--tg-safe-area-inset-bottom, 0px) + var(--current-bottom-bar-height) + 20px) 15px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             flex-grow: 1;
@@ -232,7 +231,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            bottom: calc(15px + var(--virtual-keyboard-height));
+            bottom: 15px;
             padding: 0 15px;
             display: flex;
             align-items: center;
@@ -995,48 +994,7 @@
         </div>
     </div>
 
-    <!-- VIRTUAL KEYBOARD -->
-    <div id="virtual-keyboard">
-        <div class="keyboard-row">
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Й')">Й</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ц')">Ц</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('У')">У</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('К')">К</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Е')">Е</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Н')">Н</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Г')">Г</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ш')">Ш</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Щ')">Щ</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('З')">З</div>
-        </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ф')">Ф</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ы')">Ы</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('В')">В</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('А')">А</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('П')">П</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Р')">Р</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('О')">О</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Л')">Л</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Д')">Д</div>
-        </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Я')">Я</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ч')">Ч</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('С')">С</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('М')">М</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('И')">И</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Т')">Т</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ь')">Ь</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Б')">Б</div>
-            <div class="keyboard-key" onclick="VirtualKeyboard.typeKey('Ю')">Ю</div>
-        </div>
-        <div class="keyboard-row">
-            <div class="keyboard-key wide" onclick="VirtualKeyboard.typeKey('⌫')">⌫</div>
-            <div class="keyboard-key space" onclick="VirtualKeyboard.typeKey(' ')">Пробел</div>
-            <div class="keyboard-key wide" onclick="ChatModule.sendMessage()">Отправить</div>
-        </div>
-    </div>
+
     
     <div id="toast-notification" class="toast"></div>
 
@@ -1050,7 +1008,6 @@
                 HEADER_HEIGHT: 56,
                 TAB_BAR_HEIGHT: 100,
                 CHAT_INPUT_HEIGHT: 100,
-                VIRTUAL_KEYBOARD_HEIGHT: 260,
                 SAFE_AREA_BOTTOM: 34,
                 BORDER_RADIUS_DEFAULT: 20,
                 BORDER_RADIUS_BUTTON: 15,
@@ -1119,7 +1076,6 @@
             getChatInputBar: () => document.getElementById('chat-input-area'),
             getChatInput: () => document.getElementById('chat-input'),
             getChatMessages: () => document.getElementById('chat-messages'),
-            getVirtualKeyboard: () => document.getElementById('virtual-keyboard'),
             getRoot: () => document.documentElement,
         };
 
