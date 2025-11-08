@@ -3,91 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Fullscreen Navigation Reference</title>
+    <title>Color Zones Test</title>
     <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
     <style>
         body {
             margin: 0; padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #fff);
-            color: var(--tg-theme-text-color, #000);
+            font-family: sans-serif;
+            background-color: #1c1c1d; color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* === ВЕРХНИЕ БЕЗОПАСНЫЕ ЗОНЫ === */
-        .safe-zone-top-system {
+        /* 🔴 Зона 1: Часы */
+        .zone-1-system {
             height: var(--tg-safe-area-inset-top);
+            background-color: rgba(255, 0, 0, 0.5); /* Полупрозрачный красный */
             flex-shrink: 0;
-        }
-        .safe-zone-top-telegram {
-            height: var(--tg-content-safe-area-inset-top);
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 10px;
         }
 
-        /* === ОСНОВНОЙ КОНТЕНТ === */
+        /* 🟢 Зона 2: Telegram */
+        .zone-2-telegram {
+            height: var(--tg-content-safe-area-inset-top);
+            background-color: rgba(0, 255, 0, 0.5); /* Полупрозрачный зеленый */
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 10px; color: #000;
+        }
+
+        /* 🔵 Основной контент с боковыми зонами */
         .main-content {
             flex-grow: 1;
+            background-color: #333;
+            
+            /* Боковые и нижние отступы мы покрасим отдельно */
             padding-left: calc(var(--tg-safe-area-inset-left) + 15px);
             padding-right: calc(var(--tg-safe-area-inset-right) + 15px);
             padding-bottom: calc(var(--tg-content-safe-area-inset-bottom) + 15px);
-            overflow-y: auto; /* Чтобы контент можно было скроллить, если он длинный */
+
+            /* Визуализация этих отступов через border */
+            border-left: 15px solid rgba(0, 0, 255, 0.3);
+            border-right: 15px solid rgba(0, 0, 255, 0.3);
+            border-bottom: 15px solid rgba(0, 0, 255, 0.3);
+            background-clip: padding-box; /* Чтобы фон не залезал под бордеры */
         }
 
-        /* Стили страниц */
-        .page { display: none; }
-        .page.active { display: block; }
+        h1 { 
+            margin-top: 0; 
+            background-color: rgba(255, 255, 255, 0.1); /* Подсветка заголовка */
+        }
 
-        h1 { margin-top: 0 }
-        button {
-            padding: 12px;
-            background-color: var(--tg-theme-button-color, #3390ec);
-            color: var(--tg-theme-button-text-color, #fff);
+        /* 🟡 Тестовая кнопка */
+        .test-button {
+            /* Внутренние отступы: 12px сверху/снизу, 50px слева/справа */
+            padding: 12px 50px; 
+            background-color: yellow;
+            color: black;
             border: none; border-radius: 10px;
             font-size: 16px; cursor: pointer;
-            width: 100%; margin-top: 20px;
+            /* width: 100%;  <-- Убрал 100% ширину, чтобы ты увидел боковые отступы кнопки */
+            margin-top: 20px;
+            
+            /* Чтобы видеть границы самой кнопки */
+            border: 2px solid orange;
         }
     </style>
 </head>
 <body>
 
-    <div class="safe-zone-top-system"></div>
-    <div class="safe-zone-top-telegram"></div>
+    <div class="zone-1-system">ZONE 1 (SYSTEM)</div>
+    <div class="zone-2-telegram">ZONE 2 (TELEGRAM)</div>
 
     <div class="main-content">
-
-        <div id="page1" class="page active">
-            <h1>Главная страница</h1>
-            <p>Контент начинается строго под шапкой Telegram.</p>
-            <button onclick="goToPage2()">Перейти на страницу 2</button>
-        </div>
-
-        <div id="page2" class="page">
-            <h1>Вторая страница</h1>
-            <p>Обратите внимание на кнопку "Назад" в шапке Telegram.</p>
-            <p>Она появилась, потому что мы вызвали <code>BackButton.show()</code>.</p>
-        </div>
-
+        <h1>Заголовок контента</h1>
+        <p>🔵 Синие полосы по бокам и снизу — это безопасные отступы (15px).</p>
+        
+        <button class="test-button">Кнопка с padding 50px по бокам</button>
+        
+        <p>Посмотри на желтую кнопку. Текст внутри неё не прилипает к краям оранжевой рамки, потому что там есть <code>padding: 12px 50px</code>.</p>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         if (tg.requestFullscreen) tg.requestFullscreen();
-
-        // Настраиваем обработчик кнопки "Назад" один раз при запуске
-        tg.BackButton.onClick(() => {
-            document.getElementById('page2').classList.remove('active');
-            document.getElementById('page1').classList.add('active');
-            tg.BackButton.hide(); // Скрываем кнопку, возвращаемся к крестику
-        });
-
-        function goToPage2() {
-            document.getElementById('page1').classList.remove('active');
-            document.getElementById('page2').classList.add('active');
-            tg.BackButton.show(); // Показываем стрелку "Назад"
-        }
     </script>
 </body>
 </html>
