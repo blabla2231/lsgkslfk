@@ -519,10 +519,6 @@
             height: 24px;
         }
 
-        .chat-screen {
-            --bottom-bar-height: 50px;  /* высота кнопки отправки */
-        }
-
         /* ================================================================== */
         /* 8. СПИСОК ПОКУПОК                                                */
         /* ================================================================== */
@@ -1113,6 +1109,11 @@
                 // Chat input
                 const chatBar = DOM.getChatInputBar();
                 isChatScreen ? Brick.addClass(chatBar, 'active') : Brick.removeClass(chatBar, 'active');
+
+                // 🔥 ДОБАВЛЕНО: Установка высоты нижней панели
+                const barHeight = isChatScreen ? '50px' : '80px';
+                const root = DOM.getRoot();
+                root.style.setProperty('--bottom-bar-height', barHeight);
 
                 // Back button и title
                 const backBtn = DOM.getBackButton();
