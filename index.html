@@ -756,7 +756,7 @@
                     actionsHTML = '<div class="chat-actions-container" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">';
                     actions.forEach(action => {
                         actionsHTML += `
-                            <button class="chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено'; this.disabled=true;">
+                            <button class="btn-outset chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено'; this.disabled=true;">
                                 ${action.label}
                             </button>
                         `;
