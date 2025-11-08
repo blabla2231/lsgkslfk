@@ -720,10 +720,18 @@
         // === КИРПИЧ: УПРАВЛЕНИЕ VIEW МОДАЛКИ ===
         const ModalView = {
             elements: {
-                overlay: document.getElementById('modal-overlay'),
-                title: document.getElementById('modal-title'),
-                body: document.getElementById('modal-body'),
-                applyBtn: document.querySelector('.modal-apply-btn')
+                overlay: null,
+                title: null,
+                body: null,
+                applyBtn: null
+            },
+            
+            // ДОБАВЛЯЕМ ЭТУ ФУНКЦИЮ
+            init: () => {
+                ModalView.elements.overlay = document.getElementById('modal-overlay');
+                ModalView.elements.title = document.getElementById('modal-title');
+                ModalView.elements.body = document.getElementById('modal-body');
+                ModalView.elements.applyBtn = document.querySelector('.modal-apply-btn');
             },
             render: (title, body, showApplyBtn = false) => {
                 ModalView.elements.title.textContent = title;
@@ -920,6 +928,7 @@
 
         // === ЗАПУСК ===
         document.addEventListener('DOMContentLoaded', () => {
+                ModalView.init();
                 CatalogModule.init(); ChatModule.init(); ProfileModule.init();
                 DOM.getTabButtons().forEach(btn => btn.addEventListener('click', (e) => Nav.to(e.currentTarget.dataset.target)));
                 document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) ModalOrchestrator.hide(); });
