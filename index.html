@@ -37,7 +37,10 @@
 
             /* НОВЫЕ ПЕРЕМЕННЫЕ */
             --bottom-bar-height: 80px;        /* высота таб-бара */
-            --bottom-bar-offset: 45px;        /* отступ снизу */
+            /* Используем max(), чтобы гарантировать минимум 20px отступа,
+               но если системная полоска выше (например, 34px), то отступить больше. */
+            --bottom-safe-area: var(--tg-content-safe-area-inset-bottom, 0px);
+            --bottom-bar-offset: max(20px, var(--bottom-safe-area) + 10px);
             --bottom-bar-gap: 15px;           /* зазор над баром */
 
  
@@ -92,13 +95,20 @@
         }
 
         .content {
-            padding: 15px 15px calc(var(--bottom-bar-height) + var(--bottom-bar-offset) + var(--bottom-bar-gap)) 15px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            flex-grow: 1;
-            overflow-x: hidden;
-            transition: padding-bottom 0.25s ease-out;
-            padding-top: 72px;
+            /* 
+               Добавляем сверху var(--tg-content-safe-area-inset-top). 
+               Если переменная не поддерживается (старый клиент), используем фоллбэк 20px. 
+               Итоговый верхний отступ = безопасная зона Telegram + твои желаемые 20px отступа. 
+            */ 
+            padding-top: calc(var(--tg-content-safe-area-inset-top, 0px) + 20px); 
+            padding-right: 15px; 
+            padding-bottom: calc(var(--bottom-bar-height) + var(--bottom-bar-offset) + 20px); 
+            padding-left: 15px; 
+
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            flex-grow: 1; 
+            overflow-x: hidden; 
         }
 
         .content::-webkit-scrollbar { width: 0; }
@@ -114,77 +124,58 @@
             }
         }
 
-        /* ================================================================== */
-        /* 3. ШАПКА                                                         */
-        /* ================================================================== */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            background: var(--bg-primary);
-            z-index: 200;
-            max-width: 420px;
-            margin: 0 auto;
-            will-change: transform;
-            transition: transform 300ms ease;
-            transform: translateY(0);
-        }
-
-        @media (min-width: 768px) {
-            .header {
-                border-radius: 20px 20px 0 0;
-                margin-top: 20px;
-            }
-        }
-
-        .header #floating-back-btn {
-            position: static;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            visibility: hidden;
-            cursor: pointer;
-        }
-        
-        .header #floating-back-btn.visible {
-            visibility: visible;
-        }
-
-        .header #screen-title {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .header--unpinned { 
-            transform: translateY(-100%); 
-        } 
-
-        .header--pinned { 
-            transform: translateY(0); 
-        } 
+ 
 
         /* ДОБАВЬ ДЛЯ ПОИСКА И ФИЛЬТРОВ */ 
-        .catalog-search-bar, .filter-buttons { 
-            will-change: transform; 
-            transition: transform 300ms ease; 
-            transform: translateY(0); 
-        } 
+        .catalog-search-bar { 
+            max-height: 200px; 
+            overflow: hidden; 
+            will-change: max-height, opacity; 
+            transition: max-height 300ms ease 0ms, 
+                        opacity 250ms ease 0ms, 
+                        margin-bottom 300ms ease 0ms, 
+                        padding 300ms ease 0ms; 
+        }
 
-        .catalog-search-bar.hidden, .filter-buttons.hidden { 
-            transform: translateY(-100%); 
+        .primary-filters { 
+            max-height: 200px; 
+            overflow: hidden; 
+            will-change: max-height, opacity; 
+            transition: max-height 300ms ease 50ms, 
+                        opacity 250ms ease 50ms, 
+                        margin-bottom 300ms ease 50ms, 
+                        padding 300ms ease 50ms; 
+        }
+
+        .action-filters { 
+            max-height: 200px; 
+            overflow: hidden; 
+            will-change: max-height, opacity; 
+            transition: max-height 300ms ease 100ms, 
+                        opacity 250ms ease 100ms, 
+                        margin-bottom 300ms ease 100ms, 
+                        padding 300ms ease 100ms; 
+        }
+
+        .catalog-search-bar.hidden, 
+        .primary-filters.hidden, 
+        .action-filters.hidden { 
+            max-height: 0; 
             opacity: 0; 
+            margin-bottom: 0; 
+            padding-top: 0; 
+            padding-bottom: 0; 
+            overflow: hidden; 
             pointer-events: none; 
+        }
+
+        /* ДОБАВЬ ДЛЯ ВИЗУАЛЬНОЙ ИЕРАРХИИ ТЕНЕЙ */
+        .primary-filters .btn-outset {
+            box-shadow: 0 6px 8px -3px var(--bubble-outer-shadow), 0 -4px 8px -3px var(--bubble-top-reflection), inset 0 -2px 4px -2px var(--bubble-bottom-inset), inset 0 2px 4px -2px var(--bubble-center-highlight);
+        }
+
+        .action-filters .btn-outset {
+            box-shadow: 0 4px 6px -2px var(--bubble-outer-shadow), 0 -3px 6px -2px var(--bubble-top-reflection), inset 0 -1px 3px -1px var(--bubble-bottom-inset), inset 0 1px 3px -1px var(--bubble-center-highlight);
         }
 
         /* ================================================================== */
@@ -781,15 +772,6 @@
 <body>
 
     <div class="body-wrapper">
-        <!-- HEADER -->
-        <div class="header">
-            <button id="floating-back-btn" class="btn-outset">
-                <svg viewBox="0 0 24 24" width="24" height="24"><path fill="var(--text-color)" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
-            </button>
-            <h2 id="screen-title"></h2>
-            <div style="width: 45px;"></div>
-        </div>
-
         <!-- CONTENT AREA -->
         <div class="content">
 
@@ -802,7 +784,7 @@
                     <input type="text" id="catalog-search" placeholder="Поиск по каталогу...">
                 </div>
                 
-                <div class="filter-buttons" style="margin-bottom: 10px;">
+                <div class="filter-buttons primary-filters" style="margin-bottom: 10px;">
                     <button class="btn-outset" onclick="ScreenNavigation.navigateTo('all-products-screen')">Показать все товары</button>
                     <button class="btn-outset" onclick="ScreenNavigation.navigateTo('categories-screen')">Категории</button>
                     <button class="btn-outset" id="view-toggle" style="padding: 10px; border-radius: 50%; width: 45px; height: 45px;">
@@ -810,7 +792,7 @@
                     </button>
                 </div>
 
-                <div class="filter-buttons">
+                <div class="filter-buttons action-filters">
                     <button class="btn-outset" id="sort-btn" onclick="ModalOrchestrator.show('sort')">Сортировать</button>
                     <button class="btn-outset" id="filter-btn" onclick="ModalOrchestrator.show('filter')">Фильтрация</button>
                 </div>
@@ -1025,6 +1007,16 @@
     <div id="toast-notification" class="toast"></div>
 
     <script>
+        // === ИНИЦИАЛИЗАЦИЯ TELEGRAM === 
+        const tg = window.Telegram.WebApp;
+        tg.ready();          // Сообщаем, что приложение готово 
+        tg.requestFullscreen(); // <-- ГЛАВНОЕ: Включаем настоящий полноэкранный режим (Bot API 8.0+) 
+        // tg.expand() уже не нужен, если есть requestFullscreen(), но можно оставить для совместимости со старыми клиентами.
+
+        // Настраиваем цвета под тему Telegram (по желанию)
+        // document.documentElement.style.setProperty('--bg-primary', tg.backgroundColor || '#D1D9E6');
+        // document.documentElement.style.setProperty('--text-color', tg.textColor || '#444f6a');
+
         /* ================================================================== */
         /* 1. КОНФИГУРАЦИЯ И КОНСТАНТЫ (САМЫЙ ВЕРХ)                        */
         /* ================================================================== */
@@ -1108,63 +1100,36 @@
         /* 3. ОРКЕСТРАТОРЫ (KOORDINATORY)                                  */
         /* ================================================================== */
 
+        // === ОБНОВЛЕННАЯ НАВИГАЦИЯ С НАТИВНОЙ КНОПКОЙ ===
         const ScreenNavigation = {
             navigateTo: (targetId) => {
                 if (targetId === AppState.currentScreen) return;
-                
                 Brick.haptic('light');
 
                 const isChatScreen = targetId === CONFIG.SCREENS.CHAT;
-                const isTabScreen = TAB_SCREENS.includes(targetId);
-                const isSubScreen = !isTabScreen && !isChatScreen;
+                // Вот тут ошибка в логике: isTabScreen должен включать ЧАТ, если он у тебя в табах 
+                // Судя по HTML, у тебя чат в таб-баре. Значит он ТОЖЕ главный экран. 
+                const isTabScreen = [CONFIG.SCREENS.CATALOG, CONFIG.SCREENS.LIST, CONFIG.SCREENS.PROFILE, CONFIG.SCREENS.CHAT].includes(targetId);
 
-                // Обновляем видимость элементов управления
-                ScreenNavigation.updateUIState(targetId, isTabScreen, isChatScreen);
-                ScreenNavigation.switchScreen(targetId);
-                DOM.getContent().scrollTop = 0;
-            },
+                // 1. Управление нативной кнопкой "Назад"
+                if (isTabScreen) {
+                    tg.BackButton.hide(); // На главных экранах скрываем
+                } else {
+                    tg.BackButton.show(); // На вложенных (детали товара, настройки) показываем
+                }
 
-            updateUIState: (screenId, isTabScreen, isChatScreen) => {
-                // Tab bar
+                // 2. Управление UI
                 DOM.getTabBar().style.visibility = isTabScreen ? 'visible' : 'hidden';
                 DOM.getTabBar().style.opacity = isTabScreen ? '1' : '0';
-
-                // Chat input
+                
                 const chatBar = DOM.getChatInputBar();
                 isChatScreen ? Brick.addClass(chatBar, 'active') : Brick.removeClass(chatBar, 'active');
 
-                // 🔥 ДОБАВЛЕНО: Установка высоты нижней панели
-                const barHeight = isChatScreen ? '50px' : '80px';
-                const root = DOM.getRoot();
-                root.style.setProperty('--bottom-bar-height', barHeight);
-
-                // Back button и title
-                const backBtn = DOM.getBackButton();
-                const showBack = !TAB_SCREENS.includes(screenId);
-                showBack ? Brick.addClass(backBtn, 'visible') : Brick.removeClass(backBtn, 'visible');
-
-                const titles = {
-                    [CONFIG.SCREENS.CATALOG]: 'Умный Каталог',
-                    [CONFIG.SCREENS.CHAT]: 'AI Чат',
-                    [CONFIG.SCREENS.LIST]: 'Список Покупок',
-                    [CONFIG.SCREENS.PROFILE]: 'Профиль',
-                };
-                DOM.getTitle().textContent = titles[screenId] || '';
-
-                // 🔥 ДОБАВЛЕНО: Сброс состояния элементов при переключении экранов
-                if (screenId !== CONFIG.SCREENS.CATALOG) {
-                    const header = document.querySelector('.header');
-                    const searchBar = document.querySelector('.catalog-search-bar');
-                    const filterButtons = document.querySelector('.filter-buttons');
-                    
-                    header.classList.remove('header--unpinned', 'header--pinned');
-                    searchBar.classList.remove('hidden');
-                    filterButtons.classList.remove('hidden');
-                }
-
-
+                // 3. Переключение экрана
+                ScreenNavigation.switchScreen(targetId);
+                DOM.getContent().scrollTop = 0;
             },
-
+            
             switchScreen: (targetId) => {
                 DOM.getAllScreens().forEach(screen => Brick.removeClass(screen, 'active'));
                 Brick.addClass(DOM.getScreenById(targetId), 'active');
@@ -1175,7 +1140,7 @@
                 if (activeBtn) Brick.addClass(activeBtn, 'active');
 
                 AppState.currentScreen = targetId;
-            },
+            }
         };
 
         const ModalOrchestrator = {
@@ -1259,9 +1224,17 @@
             },
         };
 
+        // === ВАЖНО: ОБРАБОТЧИК НАТИВНОЙ КНОПКИ ===
+        tg.BackButton.onClick(() => {
+            // Простая и надежная логика для начала: 
+            // Если мы не на экране каталога, возвращаемся в каталог.
+            // В будущем здесь можно сделать настоящий стек истории.
+            ScreenNavigation.navigateTo(CONFIG.SCREENS.CATALOG);
+        });
 
 
-        /* ================================================================== */
+
+        /* ==================================================================
         /* 4. SCREEN MODULES (ОТДЕЛЬНЫЙ МОДУЛЬ НА КАЖДЫЙ ЭКРАН)           */
         /* ================================================================== */
 
@@ -1495,39 +1468,7 @@
             ScreenNavigation.navigateTo(CONFIG.SCREENS.CATALOG);
         });
 
-        /* ================================================================== */
-        /* 6. ОТСЛЕЖИВАНИЕ СКРОЛЛА ДЛЯ КАТАЛОГА                             */
-        /* ================================================================== */
 
-        let lastScrollTop = 0;
-        let isScrollingDown = false;
-
-        DOM.getContent().addEventListener('scroll', () => {
-            const currentScreen = ScreenNavigation.getCurrentScreen();
-            if (currentScreen !== CONFIG.SCREENS.CATALOG) return;
-
-            const scrollTop = DOM.getContent().scrollTop;
-            isScrollingDown = scrollTop > lastScrollTop;
-            lastScrollTop = scrollTop;
-
-            const header = document.querySelector('.header');
-            const searchBar = document.querySelector('.catalog-search-bar');
-            const filterButtons = document.querySelector('.filter-buttons');
-
-            if (isScrollingDown && scrollTop > 100) {
-                // Прячем элементы при скролле вниз
-                header.classList.add('header--unpinned');
-                header.classList.remove('header--pinned');
-                searchBar.classList.add('hidden');
-                filterButtons.classList.add('hidden');
-            } else {
-                // Показываем элементы при скролле вверх или в начале страницы
-                header.classList.remove('header--unpinned');
-                header.classList.add('header--pinned');
-                searchBar.classList.remove('hidden');
-                filterButtons.classList.remove('hidden');
-            }
-        });
     </script>
 </body>
 </html>
