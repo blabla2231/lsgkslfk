@@ -560,7 +560,7 @@
         function renderCatalog() {
             const grid = document.getElementById('catalog-grid');
             grid.innerHTML = PRODUCTS_DATA.map(product => `
-                <div class="product-card" data-product-id="${product.id}" onclick="ProductDetailsScreen.show(${product.id})">
+                <div class="product-card" onclick="ProductDetailsScreen.show(${product.id})">
                     <div class="img-container">
                         <img src="${product.img}" alt="${product.name}" />
                         <div class="product-rating" style="background-color:${product.color};">${product.rating}</div>
@@ -798,7 +798,7 @@
                     actionsHTML = '<div class="chat-actions-container" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">';
                     actions.forEach(action => {
                         actionsHTML += `
-                            <button class="btn-outset chat-action-btn" data-product="${action.productName}">
+                            <button class="btn-outset chat-action-btn" onclick="ShoppingListModule.addItemWithModal('${action.productName}'); this.classList.add('added'); this.textContent='✅ Добавлено'; this.disabled=true;">
                                 ${action.label}
                             </button>
                         `;
@@ -884,13 +884,13 @@
                         ` : ''}
                         
                         <div class="details-actions">
-                            <button class="action-btn-main btn-outset btn-green" data-action="add-to-list" data-product="${product.name}">
-                            + Добавить в список
-                        </button>
-                        
-                        <button class="btn-outset action-btn-main" data-action="ask-ai" data-product-id="${product.id}">
-                            <span class="icon-ai">🤖</span> Спросить ИИ о составе
-                        </button>
+                            <button class="action-btn-main btn-outset btn-green" onclick="ShoppingListModule.addItemWithModal('${product.name}')">
+                                + Добавить в список
+                            </button>
+                            
+                            <button class="btn-outset action-btn-main" onclick="ChatModule.askAI(${product.id})">
+                                <span class="icon-ai">🤖</span> Спросить ИИ о составе
+                            </button>
                         </div>
                     </div>
                 `;
@@ -911,7 +911,9 @@
                 Brick.haptic('success');
             },
             addItemWithModal: (name) => {
-                ShoppingListModule.addItem(name); 
+                ShoppingListModule.addItem(name);
+
+                ModalView.init();
                 
                 ModalOrchestrator.showNotification(
                     '✅ Добавлено!',
@@ -932,42 +934,6 @@
                 CatalogModule.init(); ChatModule.init(); ProfileModule.init();
                 DOM.getTabButtons().forEach(btn => btn.addEventListener('click', (e) => Nav.to(e.currentTarget.dataset.target)));
                 document.getElementById('modal-overlay').addEventListener('click', function(e) { if (e.target === this) ModalOrchestrator.hide(); });
-                
-                // Event Delegation для кнопок в каталоге
-                document.getElementById('catalog-grid').addEventListener('click', (e) => {
-                    const btn = e.target.closest('.btn--card-title');
-                    if (btn) {
-                        e.stopPropagation(); // Останавливаем всплытие
-                        const card = btn.closest('.product-card');
-                        const productId = parseInt(card.dataset.productId);
-                        const product = PRODUCTS_DATA.find(p => p.id === productId);
-                        if (product) {
-                            ShoppingListModule.addItemWithModal(product.name);
-                        }
-                    }
-                });
-                
-                // Event Delegation для кнопок в чате
-                document.getElementById('chat-messages').addEventListener('click', (e) => {
-                    if (e.target.classList.contains('chat-action-btn')) {
-                        const productName = e.target.dataset.product;
-                        ShoppingListModule.addItemWithModal(productName);
-                        e.target.classList.add('added');
-                        e.target.textContent = '✅ Добавлено';
-                        e.target.disabled = true;
-                    }
-                });
-                
-                // Event Delegation для страницы деталей товара
-                document.getElementById('details-screen').addEventListener('click', (e) => {
-                    if (e.target.dataset.action === 'add-to-list') {
-                        ShoppingListModule.addItemWithModal(e.target.dataset.product);
-                    }
-                    if (e.target.dataset.action === 'ask-ai') {
-                        ChatModule.askAI(parseInt(e.target.dataset.productId));
-                    }
-                });
-                
                 renderCatalog();
                 Nav.to(CONFIG.SCREENS.CATALOG); 
             });
