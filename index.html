@@ -37,7 +37,7 @@
             --floating-bar-bottom: calc(15px + var(--safe-area-bottom));
             /* Итоговый нижний отступ контента, чтобы он не залез под таб-бар при скролле */
             /* Высота бара + его отступ от низа + 20px дополнительного воздуха */
-            --content-padding-bottom: calc(var(--tab-bar-height) + --floating-bar-bottom + 20px);
+            --content-padding-bottom: calc(var(--tab-bar-height) + var(--floating-bar-bottom) + 20px);
         }
 
         [data-theme="dark"] {
