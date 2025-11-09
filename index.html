@@ -911,8 +911,6 @@
             },
             addItemWithModal: (name) => {
                 ShoppingListModule.addItem(name);
-
-                ModalView.init();
                 
                 ModalOrchestrator.showNotification(
                     '✅ Добавлено!',
