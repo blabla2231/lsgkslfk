@@ -465,6 +465,13 @@
                  <div class="chat-container" id="chat-messages">
                     <div class="chat-message ai-message"><div class="chat-bubble card-inset">Привет! Я ваш помощник по здоровым покупкам. Чем могу помочь?</div></div>
                 </div>
+                 <div class="chat-message ai-message" id="ai-typing-indicator" style="display: none;">
+                     <div class="chat-bubble card-inset typing-indicator">
+                         <span></span>
+                         <span></span>
+                         <span></span>
+                     </div>
+                 </div>
             </div>
 
             <div id="list-screen" class="screen">
@@ -599,6 +606,7 @@
             getScrollContainer: () => document.getElementById('main-scroll'),
             getTabBar: () => document.getElementById('main-tab-bar'),
             getChatInputBar: () => document.getElementById('chat-input-area'),
+            getTypingIndicator: () => document.getElementById('ai-typing-indicator'), // <-- Добавили получение индикатора
             getRoot: () => document.documentElement,
         };
 
@@ -780,14 +788,35 @@
         const ChatModule = { 
             init: () => { document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key==='Enter') ChatModule.sendMessage(); }); }, 
             sendMessage: () => { 
-                const i=document.getElementById('chat-input'); 
-                if(!i.value.trim())return; 
-                const c=document.getElementById('chat-messages'); 
-                c.innerHTML+=`<div class="chat-message user-message"><div class="chat-bubble btn-outset">${i.value}</div></div>`; 
-                i.value=''; 
-                const sc=DOM.getScrollContainer(); 
-                sc.scrollTop=sc.scrollHeight; 
-                setTimeout(()=>{c.innerHTML+=`<div class="chat-message ai-message"><div class="chat-bubble card-inset">Ответ ИИ...</div></div>`; sc.scrollTop=sc.scrollHeight;}, 1000); 
+                const input = document.getElementById('chat-input');
+                if (!input.value.trim()) return;
+                
+                const chatContainer = document.getElementById('chat-messages');
+                const scrollContainer = DOM.getScrollContainer();
+                const indicator = DOM.getTypingIndicator(); // <-- Получаем индикатор
+
+                // 1. Добавляем сообщение пользователя
+                chatContainer.innerHTML += `<div class="chat-message user-message"><div class="chat-bubble btn-outset">${input.value}</div></div>`;
+                const userMessage = input.value; // Сохраняем запрос
+                input.value = '';
+                scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                
+                // 2. ПОКАЗАТЬ ИНДИКАТОР ВВОДА
+                if (indicator) indicator.style.display = 'flex'; // Показываем
+
+                // 3. Задержка и ответ (Имитация работы ИИ)
+                setTimeout(() => {
+                    // 4. СКРЫТЬ ИНДИКАТОР ВВОДА
+                    if (indicator) indicator.style.display = 'none'; // Скрываем
+
+                    // 5. Вывод ответа (можно сделать более сложным, как в askAI)
+                    ChatModule.sendAIMessage(
+                        `Я получил ваш запрос: "${userMessage}". Вот мой имитированный ответ.`,
+                        []
+                    );
+                    
+                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                }, 1500); // 1.5 секунды
             },
             
             sendAIMessage: (text, actions = []) => {
